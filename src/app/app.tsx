@@ -1,21 +1,21 @@
-import Logos from "components/atoms/logos";
-import Card from "components/organisms/card";
 import {
+  Bars3Icon,
   BeakerIcon,
   BookmarkIcon,
   CakeIcon,
   ChevronDownIcon,
   CubeTransparentIcon,
   FilmIcon,
-  PhoneXMarkIcon,
   LockClosedIcon,
-  Bars3Icon,
   PencilIcon,
+  PhoneXMarkIcon,
   PhotoIcon,
 } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import Button from "components/atoms/button";
+import Logos from "components/atoms/logos";
 import CopyButton from "components/molecules/copy-button";
+import Card from "components/organisms/card";
 
 import styles from "./app.module.css";
 
@@ -134,6 +134,7 @@ const App = (): JSX.Element => {
           <CopyButton text="npx degit jvidalv/vital my-app" />
         </div>
       </section>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <section className={styles.features}>
         {features.map((props, index) => (
           <div

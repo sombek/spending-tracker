@@ -1,8 +1,8 @@
-import { ComponentProps, forwardRef, useMemo, useState } from "react";
 import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
+import { ComponentProps, forwardRef, useMemo, useState } from "react";
 
 import styles from "./copy-button.module.css";
 

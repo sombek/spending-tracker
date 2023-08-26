@@ -1,6 +1,5 @@
-import React from "react";
+import { fireEvent, render } from "@testing-library/react";
 import Button from "./button";
-import { render, fireEvent } from "@testing-library/react";
 
 describe("Button test", () => {
   test("Should render the specified label and register the click", () => {

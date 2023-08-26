@@ -1,4 +1,4 @@
-import { forwardRef, ComponentProps } from "react";
+import { ComponentProps, forwardRef } from "react";
 
 import styles from "./card.module.css";
 
