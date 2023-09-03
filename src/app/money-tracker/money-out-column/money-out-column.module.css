@@ -1,0 +1,41 @@
+.moneyOutColumn {
+  @apply flex flex-col;
+  width: 100%;
+  height: 100%;
+}
+
+.moneyOutHeader {
+  @apply flex justify-between items-center p-5;
+  background: white;
+  height: 50px;
+  border: 1px solid #e6e6e6;
+  border-left: none;
+}
+
+.moneyOutContent {
+  @apply flex flex-row;
+  height: calc(100vh - (64px + 50px + 51px));
+}
+
+.moneyOutOneTimePayment {
+  width: 250px;
+  overflow: auto;
+  background: white;
+  padding: 10px;
+}
+
+.moneyOutContentCanvas {
+  width: calc(100% - 250px);
+  overflow: auto;
+  background: white;
+  padding: 10px;
+}
+
+.sum {
+  @apply flex flex-row justify-between items-center p-5;
+  height: 50px;
+
+  background: white;
+  border: 1px solid #e6e6e6;
+  border-left: none;
+}

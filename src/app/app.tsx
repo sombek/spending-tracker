@@ -1,163 +1,105 @@
-import {
-  Bars3Icon,
-  BeakerIcon,
-  BookmarkIcon,
-  CakeIcon,
-  ChevronDownIcon,
-  CubeTransparentIcon,
-  FilmIcon,
-  LockClosedIcon,
-  PencilIcon,
-  PhoneXMarkIcon,
-  PhotoIcon,
-} from "@heroicons/react/24/outline";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
-import Button from "components/atoms/button";
-import Logos from "components/atoms/logos";
-import CopyButton from "components/molecules/copy-button";
-import Card from "components/organisms/card";
+import { Disclosure } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import MoneyTracker from "app/money-tracker/money-tracker";
 
-import styles from "./app.module.css";
-
-const features = [
-  {
-    name: "Vite",
-    description:
-      "Faster and leaner development experience for modern web projects.",
-    logo: CubeTransparentIcon,
-    docs: "https://vitejs.dev/",
-  },
-  {
-    name: "React",
-    description: "JavaScript library for building user interfaces.",
-    logo: PencilIcon,
-    docs: "https://reactjs.org/",
-  },
-  {
-    name: "TypeScript",
-    description:
-      "Strongly typed programming language that builds on JavaScript.",
-    logo: BookmarkIcon,
-    docs: "https://www.typescriptlang.org/",
-  },
-  {
-    name: "Tailwind with JIT",
-    description: "A utility-first CSS framework packed with classes.",
-    logo: PhotoIcon,
-    docs: "https://tailwindcss.com/",
-  },
-  {
-    name: "Jest",
-    description: "Testing Framework with a focus on simplicity.",
-    logo: QuestionMarkCircleIcon,
-    docs: "https://jestjs.io/",
-  },
-  {
-    name: "CSS Modules",
-    description:
-      "CSS file in which all class names and animation names are scoped locally by default.",
-    logo: LockClosedIcon,
-    docs: "https://github.com/css-modules/css-modules",
-  },
-  {
-    name: "ESLint",
-    description: "Find and fix problems in your JavaScript code.",
-    logo: BeakerIcon,
-    docs: "https://eslint.org/",
-  },
-  {
-    name: "Prettier",
-    description: "An opinionated code formatter.",
-    logo: Bars3Icon,
-    docs: "https://prettier.io/",
-  },
-  {
-    name: "Husky",
-    description:
-      "Lint your commit messages, run tests, lint code, etc... when you commit or push.",
-    logo: CakeIcon,
-    docs: "https://github.com/typicode/husky",
-  },
-  {
-    name: "Commit-lint",
-    description: "Helps your team adhering to a commit convention.",
-    logo: FilmIcon,
-    docs: "https://github.com/conventional-changelog/commitlint",
-  },
-  {
-    name: "Atomic design",
-    description:
-      "We’re not designing pages, we’re designing systems of components.",
-    logo: PhoneXMarkIcon,
-    docs: "https://bradfrost.com/blog/post/atomic-web-design/",
-  },
-  {
-    name: "Absolute imports",
-    description:
-      "Import resource using its full path from the project’s src folder.",
-    logo: ChevronDownIcon,
-    docs: "https://github.com/vitejs/vite/issues/88#issuecomment-762415200",
-  },
+const navigation = [
+  { name: "Money Tracker Dashboard", href: "#", current: true },
+  { name: "Reports", href: "#", current: false },
 ];
 
-const App = (): JSX.Element => {
-  return (
-    <main className={styles.main}>
-      <header className={styles.header}>
-        <h3 className={styles.headerTopTitle}>
-          <span className={styles.headerTopTitleVital}>Vital</span> @ Vite
-          Template
-        </h3>
-        <h1 className={styles.headerTitle}>React + TypeScript + Tailwind</h1>
-        <p className={styles.headerDescription}>
-          Bootstrap your web projects faster than ever. Comes with:{" "}
-          <code className={styles.headerDescriptionCode}>CSS-Modules</code>,{" "}
-          <code className={styles.headerDescriptionCode}>Jest</code>,{" "}
-          <code className={styles.headerDescriptionCode}>Husky</code>,{" "}
-          <code className={styles.headerDescriptionCode}>Commit-lint</code>,{" "}
-          <code className={styles.headerDescriptionCode}>ESLint</code>,{" "}
-          <code className={styles.headerDescriptionCode}>Prettier</code> and{" "}
-          <code className={styles.headerDescriptionCode}>
-            Atomic organization for components
-          </code>
-          . Configured and ready to go.
-        </p>
-        <div className={styles.viteLogoContainer}>
-          <Logos.Vite className={styles.viteLogo} />
-        </div>
-      </header>
-      <section className={styles.copy}>
-        <div className={styles.copyInner}>
-          <a href="https://github.com/jvidalv/vital">
-            <Button>Visit on Github</Button>
-          </a>
-          <CopyButton text="npx degit jvidalv/vital my-app" />
-        </div>
-      </section>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <section className={styles.features}>
-        {features.map((props, index) => (
-          <div
-            key={index}
-            className={styles.cardWrapper}
-            style={{ animationDelay: `${index * 0.1 + 0.1}s` }}
-          >
-            <Card
-              title={props.name}
-              description={props.description}
-              Icon={props.logo}
-              href={props.docs}
-            />
-          </div>
-        ))}
-      </section>
-      <footer className={styles.footer}>
-        <a href="https://github.com/jvidalv">
-          Josep Vidal @ {new Date().getFullYear()}
-        </a>
-      </footer>
-    </main>
-  );
-};
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
-export default App;
+export default function App() {
+  return (
+    <>
+      <div className="min-h-full">
+        <Disclosure as="nav" className="bg-gray-800">
+          {({ open }) => (
+            <>
+              <div className="mx-auto max-w-7xl ">
+                <div className="flex h-16 items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <img
+                        className="h-8 w-8"
+                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        alt="Your Company"
+                      />
+                    </div>
+                    <div className="hidden md:block">
+                      <div className="ml-10 flex items-baseline space-x-4">
+                        {navigation.map((item) => (
+                          <a
+                            key={item.name}
+                            href={item.href}
+                            className={classNames(
+                              item.current
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "rounded-md px-3 py-2 text-sm font-medium",
+                            )}
+                            aria-current={item.current ? "page" : undefined}
+                          >
+                            {item.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="-mr-2 flex md:hidden">
+                    {/* Mobile menu button */}
+                    <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <span className="absolute -inset-0.5" />
+                      <span className="sr-only">Open main menu</span>
+                      {open ? (
+                        <XMarkIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <Bars3Icon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Disclosure.Button>
+                  </div>
+                </div>
+              </div>
+
+              <Disclosure.Panel className="md:hidden">
+                <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                  {navigation.map((item) => (
+                    <Disclosure.Button
+                      key={item.name}
+                      as="a"
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block rounded-md px-3 py-2 text-base font-medium",
+                      )}
+                      aria-current={item.current ? "page" : undefined}
+                    >
+                      {item.name}
+                    </Disclosure.Button>
+                  ))}
+                </div>
+              </Disclosure.Panel>
+            </>
+          )}
+        </Disclosure>
+
+        <main>
+          <div className="mx-auto">
+            <MoneyTracker />
+          </div>
+        </main>
+      </div>
+    </>
+  );
+}

@@ -7,7 +7,7 @@ describe("Button test", () => {
     const label = "This is a button";
 
     const { getByText, getByRole } = render(
-      <Button onClick={onClick}>{label}</Button>
+      <Button onClick={onClick}>{label}</Button>,
     );
 
     const button = getByRole("button");
