@@ -1,8 +1,12 @@
 import { HotColumn, HotTable } from "@handsontable/react";
 import { useEffect, useRef } from "react";
 import Core from "handsontable/core";
+import { CellChange } from "handsontable/common";
 
-const MultiPayments = () => {
+const MultiPayments = (props: {
+  setMultiPayments: (data: [string, number][]) => void;
+  data: [string, number][];
+}) => {
   const hotTableComponentRef = useRef(null);
   useEffect(() => {
     // @ts-ignore
@@ -10,7 +14,6 @@ const MultiPayments = () => {
     if (hot === undefined) throw new Error("No hot instance found");
     const gridContext = hot.getShortcutManager().getContext("grid");
     if (gridContext === undefined) throw new Error("No grid context found");
-
     gridContext.addShortcut({
       group: "Insert",
       runOnlyIf: () => hot.getSelected() !== void 0,
@@ -53,6 +56,26 @@ const MultiPayments = () => {
       },
     });
   }, []);
+
+  function afterChange(changes: CellChange[] | null) {
+    if (changes === null) return;
+    console.log(changes);
+    const copyOfData: [string, number][] = [];
+    Object.assign(copyOfData, props.data);
+
+    for (const change of changes) {
+      const row = change[0];
+      const column = change[1];
+      if (typeof column !== "number") throw new Error("Invalid row or column");
+
+      copyOfData[row][column] = change[3];
+    }
+
+    console.log(copyOfData);
+
+    props.setMultiPayments(copyOfData);
+  }
+
   return (
     <>
       <h2>Multi Payments</h2>
@@ -60,13 +83,7 @@ const MultiPayments = () => {
       <div style={{ marginTop: "10px" }}>
         <HotTable
           ref={hotTableComponentRef}
-          data={[
-            // data of category based payments
-            // e.g: Bills, Groceries, Restaurants & Cafe,
-            ["Bills", 300],
-            ["Groceries", 200],
-            ["Restaurants & Cafe", 150],
-          ]}
+          data={props.data}
           colHeaders={true}
           rowHeaders={false}
           // take the proper width of the parent element
@@ -75,12 +92,13 @@ const MultiPayments = () => {
           height="auto"
           autoColumnSize={true}
           contextMenu={true}
+          afterChange={afterChange}
           stretchH={"all"}
           colWidths={"100%"}
           licenseKey="non-commercial-and-evaluation"
         >
           <HotColumn title={"Name"} />
-          <HotColumn title={"Amount"} />
+          <HotColumn title={"Amount"} readOnly={true} />
         </HotTable>
       </div>
     </>
