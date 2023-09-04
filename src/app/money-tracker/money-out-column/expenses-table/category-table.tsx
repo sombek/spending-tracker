@@ -1,26 +1,31 @@
+import { useEffect, useRef, useState } from "react";
+import Core from "handsontable/core";
 import { HotColumn, HotTable } from "@handsontable/react";
-import { useEffect, useRef } from "react";
-import { CellChange } from "handsontable/common";
 import {
   CategoryViewModel,
   PurchaseViewModel,
 } from "app/money-tracker/money-out-column/category-view-model";
 
-const MultiPayments = (props: {
+const CategoryTable = (props: {
+  title: string;
+  multiPayments: CategoryViewModel[];
   setMultiPayments: (data: CategoryViewModel[]) => void;
-  data: CategoryViewModel[];
 }) => {
+  const [categoryPurchases] = useState<PurchaseViewModel[]>(() => {
+    const categoryRow = props.multiPayments.find(
+      (payment) => payment.title === props.title,
+    );
+    if (categoryRow === undefined) throw new Error("No category row found");
+    return categoryRow.purchases;
+  });
+
   const hotTableComponentRef = useRef<HotTable>(null);
   useEffect(() => {
-    console.log(props.data);
-    const current = hotTableComponentRef.current;
-    if (current === null) return;
-    const hot = current.hotInstance;
-    if (hot === null) return;
-
+    // @ts-ignore
+    const hot: Core = hotTableComponentRef.current.hotInstance;
+    if (hot === undefined) throw new Error("No hot instance found");
     const gridContext = hot.getShortcutManager().getContext("grid");
     if (gridContext === undefined) throw new Error("No grid context found");
-
     gridContext.addShortcut({
       group: "Insert",
       runOnlyIf: () => hot.getSelected() !== void 0,
@@ -62,73 +67,58 @@ const MultiPayments = (props: {
         hot.alter("remove_row", selectedRow[0][0]);
       },
     });
-  }, [props.data]);
-
-  function afterChange(changes: CellChange[] | null, source: string) {
-    if (changes === null) return;
-    if (source !== "edit") return;
-
-    // data is being updated by the hot table
-    // just need to create a copy of the data and update the state
-    const copyOfData: CategoryViewModel[] = [];
-    Object.assign(copyOfData, props.data);
-    props.setMultiPayments(copyOfData);
-  }
-
-  function afterRemoveRow() {
-    // data is being updated by the hot table
-    // just need to create a copy of the data and update the state
-    const copyOfData: CategoryViewModel[] = [];
-    Object.assign(copyOfData, props.data);
-    props.setMultiPayments(copyOfData);
-  }
+  }, []);
+  // on change log the sum of amount column
 
   return (
     <>
-      <h2>Multi Payments</h2>
+      <h2>{props.title}</h2>
       <hr />
       <div style={{ marginTop: "10px" }}>
         <HotTable
           ref={hotTableComponentRef}
-          data={props.data}
           colHeaders={true}
           rowHeaders={false}
+          // default row count when the table is initialized
+          data={categoryPurchases}
+          minRows={1}
+          // take the proper width of the parent element
           width="100%"
+          // take the proper height of the parent element
           height="auto"
           autoColumnSize={true}
           contextMenu={true}
-          afterRemoveRow={afterRemoveRow}
-          afterChange={afterChange}
           stretchH={"all"}
           colWidths={"100%"}
+          afterChange={(changes) => {
+            if (changes === null) return;
+            const current = hotTableComponentRef.current;
+            if (current === null) return;
+            const hotInstance = current.hotInstance;
+            if (hotInstance === null) return;
+
+            const copyOfAllData: CategoryViewModel[] = [];
+            Object.assign(copyOfAllData, props.multiPayments);
+            const payment = copyOfAllData.find(
+              (payment) => payment.title === props.title,
+            );
+            if (payment === undefined) throw new Error("No payment found");
+            payment.purchases = categoryPurchases;
+
+            props.setMultiPayments(copyOfAllData);
+          }}
           licenseKey="non-commercial-and-evaluation"
         >
           <HotColumn title={"Name"} data={"title"} />
           <HotColumn
             title={"Amount"}
-            data={"purchases"}
-            readOnly={true}
-            renderer={(
-              instance,
-              td,
-              row,
-              col,
-              prop,
-              value: PurchaseViewModel[],
-            ) => {
+            data={"amount"}
+            renderer={(instance, td, row, col, prop, value) => {
               const formatter = new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "SAR",
               });
-
-              const sum = value.reduce((sum, purchase) => {
-                if (purchase.amount === null || purchase.amount === undefined)
-                  return sum;
-
-                return sum + +purchase.amount;
-              }, 0);
-
-              td.innerHTML = formatter.format(sum);
+              td.innerHTML = formatter.format(value);
               return td;
             }}
           />
@@ -137,4 +127,5 @@ const MultiPayments = (props: {
     </>
   );
 };
-export default MultiPayments;
+
+export default CategoryTable;
