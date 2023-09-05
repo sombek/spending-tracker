@@ -3,8 +3,13 @@ import { useEffect, useRef } from "react";
 
 import "pikaday/css/pikaday.css";
 import Core from "handsontable/core";
+import { PurchaseViewModel } from "app/money-tracker/money-out-column/category-view-model";
+import { CellChange } from "handsontable/common";
 
-const OneTimePayments = () => {
+const OneTimePayments = (props: {
+  singlePayments: PurchaseViewModel[];
+  setSinglePayments: (data: PurchaseViewModel[]) => void;
+}) => {
   const hotTableComponentRef = useRef(null);
   useEffect(() => {
     // @ts-ignore
@@ -56,6 +61,25 @@ const OneTimePayments = () => {
     });
   }, []);
 
+  function afterChange(changes: CellChange[] | null, source: string) {
+    if (changes === null) return;
+    if (source !== "edit") return;
+
+    // data is being updated by the hot table
+    // just need to create a copy of the data and update the state
+    const copyOfData: PurchaseViewModel[] = [];
+    Object.assign(copyOfData, props.singlePayments);
+    props.setSinglePayments(copyOfData);
+  }
+
+  function afterRemoveRow() {
+    // data is being updated by the hot table
+    // just need to create a copy of the data and update the state
+    const copyOfData: PurchaseViewModel[] = [];
+    Object.assign(copyOfData, props.singlePayments);
+    props.setSinglePayments(copyOfData);
+  }
+
   return (
     <div>
       <h2>One Time Payments</h2>
@@ -63,13 +87,7 @@ const OneTimePayments = () => {
       <div style={{ marginTop: "10px" }}>
         <HotTable
           ref={hotTableComponentRef}
-          data={[
-            // data of recurring one-time payments
-            // e.g: rent, car installment, family support, etc.
-            ["Rent", 1000],
-            ["Car Installment", 500],
-            ["Family Support", 1000],
-          ]}
+          data={props.singlePayments}
           colHeaders={true}
           rowHeaders={false}
           // take the proper width of the parent element
@@ -78,12 +96,27 @@ const OneTimePayments = () => {
           height="auto"
           autoColumnSize={true}
           contextMenu={true}
+          afterRemoveRow={afterRemoveRow}
+          afterChange={afterChange}
           stretchH={"all"}
           colWidths={"100%"}
           licenseKey="non-commercial-and-evaluation"
         >
-          <HotColumn title={"Name"} />
-          <HotColumn title={"Amount"} />
+          <HotColumn title={"Name"} data={"title"} />
+          <HotColumn
+            title={"Amount"}
+            data={"amount"}
+            renderer={(instance, td, row, col, prop, value: number | null) => {
+              const formatter = new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "SAR",
+              });
+              if (value === null || value === undefined) value = 0;
+
+              td.innerHTML = formatter.format(value);
+              return td;
+            }}
+          />
         </HotTable>
       </div>
     </div>

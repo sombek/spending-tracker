@@ -1,73 +1,87 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { ComponentProps, forwardRef } from "react";
 import styles from "./money-in-column.module.css";
+import { PurchaseViewModel } from "app/money-tracker/money-out-column/category-view-model";
+import { HotColumn, HotTable } from "@handsontable/react";
+import { useMemo } from "react";
 
-const MoneyInColumn = forwardRef<
-  HTMLDivElement,
-  Omit<ComponentProps<"div">, "className">
->((props, ref) => (
-  <div ref={ref} {...props}>
-    <div className={styles.moneyInColumnContent}>
-      <div className={styles.moneyInHeader}>
-        <div className={styles.moneyIn}>💰Money In</div>
-        <button className="bg-gray-300 hover:bg-gray-400 py-1.5 px-1.5 rounded inline-flex items-center border shadow">
-          <PlusIcon className="w-4 h-4" aria-hidden="true" />
-        </button>
-      </div>
+const MoneyInColumn = (props: {
+  moneyIn: PurchaseViewModel[];
+  setMoneyIn: (data: PurchaseViewModel[]) => void;
+}) => {
+  const totalMoneyIn = useMemo(() => {
+    return props.moneyIn.reduce((sum, payment) => {
+      if (payment.amount === null || payment.amount === undefined) return sum;
 
-      {/*  listing*/}
-      <div className={styles.listing}>
-        <div className={styles.listingItem}>
-          <div className={"text-xs font-extrabold"} style={{ color: "grey" }}>
-            Fri, 10 Sep
-          </div>
+      return sum + +payment.amount;
+    }, 0);
+  }, [props.moneyIn]);
 
-          <div className={"flex flex-row justify-between"}>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>Salary</div>
-            </div>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>£ 1,000.00</div>
-            </div>
+  return (
+    <div>
+      <div className={styles.moneyInColumnContent}>
+        <div className={styles.moneyInHeader}>
+          <div className={styles.moneyIn}>💰Money In</div>
+        </div>
+        <div
+          className={"p-2 bg-white"}
+          style={{
+            height: "calc(100vh - (50px + 64px + 50px + 1px))",
+            borderRight: "1px solid #e2e8f0",
+          }}
+        >
+          <div className={"mt-2"}>
+            <HotTable
+              colHeaders={true}
+              rowHeaders={false}
+              data={props.moneyIn}
+              // default row count when the table is initialized
+              minRows={1}
+              // take the proper width of the parent element
+              width="100%"
+              // take the proper height of the parent element
+              height="auto"
+              autoColumnSize={true}
+              contextMenu={true}
+              afterChange={(changes) => {
+                if (changes === null) return;
+                // data is being updated by the hot table
+                // just need to create a copy of the data and update the state
+                const copyOfData: PurchaseViewModel[] = [];
+                Object.assign(copyOfData, props.moneyIn);
+                props.setMoneyIn(copyOfData);
+              }}
+              stretchH={"all"}
+              colWidths={"100%"}
+              licenseKey="non-commercial-and-evaluation"
+            >
+              <HotColumn title={"Name"} data={"title"} />
+              <HotColumn
+                title={"Amount"}
+                data={"amount"}
+                renderer={(instance, td, row, col, prop, value) => {
+                  const formatter = new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "SAR",
+                  });
+                  td.innerHTML = formatter.format(value);
+                  return td;
+                }}
+              />
+            </HotTable>
           </div>
         </div>
-        <div className={styles.listingItem}>
-          <div className={"text-xs font-extrabold"} style={{ color: "grey" }}>
-            Fri, 10 Sep
-          </div>
 
-          <div className={"flex flex-row justify-between"}>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>Salary</div>
-            </div>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>£ 1,000.00</div>
-            </div>
+        {/*  At bottom show sum*/}
+        <div className={styles.sum}>
+          <div className={styles.sumText}>Total</div>
+          <div className={styles.sumAmount}>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "SAR",
+            }).format(totalMoneyIn)}
           </div>
         </div>
-        <div className={styles.listingItem}>
-          <div className={"text-xs font-extrabold"} style={{ color: "grey" }}>
-            Fri, 10 Sep
-          </div>
-
-          <div className={"flex flex-row justify-between"}>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>Salary</div>
-            </div>
-            <div className={"col-auto"}>
-              <div className={"text-xs"}>£ 1,000.00</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/*  */}
-
-      {/*  At bottom show sum*/}
-      <div className={styles.sum}>
-        <div className={styles.sumText}>Total</div>
-        <div className={styles.sumAmount}>£ 1,000.00</div>
       </div>
     </div>
-  </div>
-));
+  );
+};
 export default MoneyInColumn;
