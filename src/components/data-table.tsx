@@ -7,9 +7,9 @@ import {
 } from "app/money-tracker/money-out-column/category-view-model";
 
 interface DataTableProps {
-  title: string;
-  data: CategoryViewModel[];
-  setMultiPayments: (data: CategoryViewModel[]) => void;
+  data: CategoryViewModel[] | PurchaseViewModel[];
+  onAfterChange: (changes: CellChange[] | null, source: string) => void;
+  onAfterRemoveRow: () => void;
   isMultiPayments: boolean;
 }
 
@@ -26,7 +26,7 @@ const DataTable = (props: DataTableProps) => {
     if (gridContext === undefined) throw new Error("No grid context found");
 
     gridContext.addShortcut({
-      group: "InsertOnMultiPayments",
+      group: "Insert",
       runOnlyIf: () => hot.getSelected() !== void 0,
       keys: [
         ["Alt", "ArrowDown"],
@@ -57,7 +57,10 @@ const DataTable = (props: DataTableProps) => {
     gridContext.addShortcut({
       group: "Delete",
       runOnlyIf: () => hot.getSelected() !== void 0,
-      keys: [["Alt", "Meta", "Backspace"]],
+      keys: [
+        ["Alt", "Meta", "Backspace"],
+        ["Alt", "Meta", "Delete"],
+      ],
       callback: () => {
         // delete the selected row
         const selectedRow = hot.getSelected();
@@ -68,38 +71,20 @@ const DataTable = (props: DataTableProps) => {
     });
   }, []);
 
-  function afterChange(changes: CellChange[] | null, source: string) {
-    if (changes === null) return;
-    if (source !== "edit") return;
-
-    // data is being updated by the hot table
-    // just need to create a copy of the data and update the state
-    const copyOfData: CategoryViewModel[] = [];
-    Object.assign(copyOfData, props.data);
-    props.setMultiPayments(copyOfData);
-  }
-
-  function afterRemoveRow() {
-    // data is being updated by the hot table
-    // just need to create a copy of the data and update the state
-    const copyOfData: CategoryViewModel[] = [];
-    Object.assign(copyOfData, props.data);
-    props.setMultiPayments(copyOfData);
-  }
-
   return (
     <>
       <HotTable
         ref={hotTableComponentRef}
         data={props.data}
+        minRows={1}
         colHeaders={true}
         rowHeaders={false}
         width="100%"
         height="auto"
         autoColumnSize={true}
         contextMenu={true}
-        afterRemoveRow={afterRemoveRow}
-        afterChange={afterChange}
+        afterRemoveRow={props.onAfterRemoveRow}
+        afterChange={props.onAfterChange}
         stretchH={"all"}
         colWidths={"100%"}
         licenseKey="non-commercial-and-evaluation"

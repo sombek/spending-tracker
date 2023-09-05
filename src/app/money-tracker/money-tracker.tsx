@@ -7,39 +7,12 @@ import {
 } from "app/money-tracker/money-out-column/category-view-model";
 
 export default function MoneyTracker() {
-  const [moneyIn, setMoneyIn] = useState<PurchaseViewModel[]>([
-    {
-      title: "Salary",
-      amount: 0,
-    },
-    {
-      title: "Other",
-      amount: 0,
-    },
-  ]);
+  const [moneyIn, setMoneyIn] = useState<PurchaseViewModel[]>([]);
 
-  // single payments
-  const [singlePayments, setSinglePayments] = useState<PurchaseViewModel[]>([
-    {
-      title: "Rent",
-      amount: 0,
-    },
-    {
-      title: "Food",
-      amount: 0,
-    },
-  ]);
+  const [singlePayments, setSinglePayments] = useState<PurchaseViewModel[]>([]);
 
-  const [multiPayments, setMultiPayments] = useState<CategoryViewModel[]>([
-    {
-      title: "Rent",
-      purchases: [],
-    },
-    {
-      title: "Food",
-      purchases: [],
-    },
-  ]);
+  const [multiPayments, setMultiPayments] = useState<CategoryViewModel[]>([]);
+
   return (
     <div className={"flex flex-row"}>
       <MoneyInColumn moneyIn={moneyIn} setMoneyIn={setMoneyIn} />
