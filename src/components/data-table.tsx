@@ -2,12 +2,12 @@ import { useEffect, useRef } from "react";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { CellChange } from "handsontable/common";
 import {
-  CategoryViewModel,
-  PurchaseViewModel,
-} from "app/money-tracker/money-out-column/category-view-model";
+  MultiPaymentBreakdown,
+  Transaction,
+} from "infrastructure/backend-service";
 
 interface DataTableProps {
-  data: CategoryViewModel[] | PurchaseViewModel[];
+  data: MultiPaymentBreakdown[] | Transaction[];
   onAfterChange: (changes: CellChange[] | null, source: string) => void;
   onAfterRemoveRow: () => void;
   isMultiPayments: boolean;
@@ -100,7 +100,7 @@ const DataTable = (props: DataTableProps) => {
             row,
             col,
             prop,
-            value: PurchaseViewModel[] | number | null,
+            value: Transaction[] | number | null,
           ) => {
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
@@ -119,7 +119,7 @@ const DataTable = (props: DataTableProps) => {
             }
 
             // the value is an array of purchases
-            value = value as PurchaseViewModel[];
+            value = value as Transaction[];
             const sum = value.reduce((sum, purchase) => {
               if (purchase.amount === null || purchase.amount === undefined)
                 return sum;

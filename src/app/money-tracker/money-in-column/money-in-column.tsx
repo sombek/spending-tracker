@@ -1,13 +1,14 @@
 import styles from "./money-in-column.module.css";
-import { PurchaseViewModel } from "app/money-tracker/money-out-column/category-view-model";
 import { useMemo } from "react";
 import DataTable from "components/data-table";
+import { Transaction } from "infrastructure/backend-service";
 
 const MoneyInColumn = (props: {
-  moneyIn: PurchaseViewModel[];
-  setMoneyIn: (data: PurchaseViewModel[]) => void;
+  moneyIn: Transaction[];
+  setMoneyIn: (data: Transaction[]) => void;
 }) => {
   const totalMoneyIn = useMemo(() => {
+    if (props.moneyIn === undefined) return 0;
     return props.moneyIn.reduce((sum, payment) => {
       if (payment.amount === null || payment.amount === undefined) return sum;
 

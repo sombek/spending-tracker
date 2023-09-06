@@ -34,7 +34,7 @@
 .sum {
   @apply flex flex-row justify-between items-center p-5;
   height: 50px;
-
+  max-width: 757px;
   background: white;
   border: 1px solid #e6e6e6;
   border-left: none;

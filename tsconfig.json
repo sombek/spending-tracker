@@ -19,6 +19,7 @@
     "paths": {
       "app/*": ["src/app/*"],
       "components/*": ["src/components/*"],
+      "infrastructure/*": ["src/infrastructure/*"],
       "hooks/*": ["src/hooks/*"]
     }
   },

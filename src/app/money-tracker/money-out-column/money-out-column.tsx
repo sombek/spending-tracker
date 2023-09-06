@@ -4,18 +4,19 @@ import OneTimePayments from "app/money-tracker/money-out-column/one-time-payment
 import { useMemo } from "react";
 import MultiPayments from "app/money-tracker/money-out-column/multi-payments/multi-payments";
 import {
-  CategoryViewModel,
-  PurchaseViewModel,
-} from "app/money-tracker/money-out-column/category-view-model";
+  MultiPaymentBreakdown,
+  Transaction,
+} from "infrastructure/backend-service";
 
 const MoneyOutColumn = (props: {
-  moneyIn: PurchaseViewModel[];
-  singlePayments: PurchaseViewModel[];
-  setSinglePayments: (data: PurchaseViewModel[]) => void;
-  multiPayments: CategoryViewModel[];
-  setMultiPayments: (data: CategoryViewModel[]) => void;
+  moneyIn: Transaction[];
+  singlePayments: Transaction[];
+  setSinglePayments: (data: Transaction[]) => void;
+  multiPayments: MultiPaymentBreakdown[];
+  setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
 }) => {
   const sumOfMoneyIn = useMemo(() => {
+    if (props.moneyIn === undefined) return 0;
     return props.moneyIn.reduce((sum, payment) => {
       if (payment.amount === null || payment.amount === undefined) return sum;
 
@@ -24,7 +25,12 @@ const MoneyOutColumn = (props: {
   }, [props.moneyIn]);
 
   const sumOfMoneyOut = useMemo(() => {
+    if (props.multiPayments === undefined) return 0;
     const multiPaymentsSum = props.multiPayments.reduce((sum, payment) => {
+      if (payment.purchases === undefined) {
+        console.log(payment, "payment");
+        return sum;
+      }
       if (payment.purchases.length == 0) return 0;
 
       return (

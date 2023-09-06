@@ -1,17 +1,17 @@
 import { useState } from "react";
 
-import {
-  CategoryViewModel,
-  PurchaseViewModel,
-} from "app/money-tracker/money-out-column/category-view-model";
 import DataTable from "components/data-table";
+import {
+  MultiPaymentBreakdown,
+  Transaction,
+} from "infrastructure/backend-service";
 
 const CategoryTable = (props: {
   title: string;
-  multiPayments: CategoryViewModel[];
-  setMultiPayments: (data: CategoryViewModel[]) => void;
+  multiPayments: MultiPaymentBreakdown[];
+  setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
 }) => {
-  const [categoryPurchases] = useState<PurchaseViewModel[]>(() => {
+  const [categoryPurchases] = useState<Transaction[]>(() => {
     const categoryRow = props.multiPayments.find(
       (payment) => payment.title === props.title,
     );
@@ -24,7 +24,7 @@ const CategoryTable = (props: {
       (payment) => payment.title === props.title,
     );
     if (categoryRow === undefined) throw new Error("No category row found");
-    categoryRow.purchases = categoryPurchases;
+    categoryRow.purchases = categoryPurchases || [];
     props.setMultiPayments([...props.multiPayments]);
   }
 

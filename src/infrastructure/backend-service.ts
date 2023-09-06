@@ -1,58 +1,44 @@
 // use axios to make http requests
 // import axios from "axios";
+import axios from "axios";
 
-export const getYearMonthData = async (year: number, month: number) => {
-  console.log("getYearMonthData", year, month);
-  // wait 1 second
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return {
-    "money-in": [
-      {
-        title: "Salary",
-        amount: 1000,
-      },
-      {
-        title: "Bonus",
-        amount: 200,
-      },
-    ],
-    "money-out": [
-      {
-        title: "Rent",
-        amount: 500,
-      },
-      {
-        title: "Food",
-        amount: 200,
-      },
-    ],
-    "money-out-by-category": [
-      {
-        title: "Food",
-        purchases: [
-          {
-            title: "Pizza",
-            amount: 100,
-          },
-          {
-            title: "Burger",
-            amount: 50,
-          },
-        ],
-      },
-      {
-        title: "Bills",
-        purchases: [
-          {
-            title: "Electricity",
-            amount: 100,
-          },
-          {
-            title: "Water",
-            amount: 50,
-          },
-        ],
-      },
-    ],
-  };
+export interface BudgetBreakdownJson {
+  moneyIn: Transaction[];
+  singlePayments: Transaction[];
+  multiPayments: MultiPaymentBreakdown[];
+}
+
+export interface Transaction {
+  title: string;
+  amount: number;
+}
+
+// MultiPaymentBreakdown
+export interface MultiPaymentBreakdown {
+  title: string;
+  purchases: Transaction[];
+}
+
+export const upsertBudget = async (
+  year: number,
+  month: number,
+  budgetState: BudgetBreakdownJson,
+): Promise<void> => {
+  const response = await axios.post(
+    `http://localhost:8000/budget-breakdown/${year}/${month}`,
+    budgetState,
+  );
+  if (response.status !== 200) throw new Error("Error saving budget");
+};
+
+export const getYearMonthData = async (
+  year: number,
+  month: number,
+): Promise<BudgetBreakdownJson> => {
+  const response = await axios.get<BudgetBreakdownJson>(
+    `http://localhost:8000/budget-breakdown/${year}/${month}`,
+    // convert all responses to camelCase
+  );
+  if (response.status !== 200) throw new Error("Error getting budget");
+  return response.data;
 };
