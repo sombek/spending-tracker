@@ -23,10 +23,16 @@ export const upsertBudget = async (
   year: number,
   month: number,
   budgetState: BudgetBreakdownJson,
+  accessToken: string,
 ): Promise<void> => {
   const response = await axios.post(
     `http://localhost:8000/budget-breakdown/${year}/${month}`,
     budgetState,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
   );
   if (response.status !== 200) throw new Error("Error saving budget");
 };
@@ -34,10 +40,15 @@ export const upsertBudget = async (
 export const getYearMonthData = async (
   year: number,
   month: number,
+  accessToken: string,
 ): Promise<BudgetBreakdownJson> => {
   const response = await axios.get<BudgetBreakdownJson>(
     `http://localhost:8000/budget-breakdown/${year}/${month}`,
-    // convert all responses to camelCase
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
   );
   if (response.status !== 200) throw new Error("Error getting budget");
   return response.data;

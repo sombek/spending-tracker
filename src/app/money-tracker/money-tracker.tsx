@@ -10,8 +10,12 @@ import {
   upsertBudget,
 } from "infrastructure/backend-service";
 import LoadingSpinner from "components/loading";
+import { useParams } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function MoneyTracker() {
+  const { getAccessTokenSilently } = useAuth0();
+
   const [moneyIn, setMoneyIn] = useState<Transaction[]>([]);
 
   const [singlePayments, setSinglePayments] = useState<Transaction[]>([]);
@@ -19,10 +23,12 @@ export default function MoneyTracker() {
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
     [],
   );
-
+  // year, and month are going to be in the route
+  const { year, month } = useParams();
   // on each update on the data, we need to update the state in backend
   // so that we can save the data
   useEffect(() => {
+    if (!year || !month) throw new Error("Year or month not provided");
     // remove empty transactions
     const cleanedMoneyIn = moneyIn.filter(
       (transaction) => Object.keys(transaction).length !== 0,
@@ -64,9 +70,12 @@ export default function MoneyTracker() {
         }),
       ),
     };
-
-    upsertBudget(2023, 1, updatedMultiPayments).catch((error) => {
-      console.error(error);
+    getAccessTokenSilently().then((access_token) => {
+      upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(
+        (error) => {
+          console.error(error);
+        },
+      );
     });
   }, [moneyIn, singlePayments, multiPayments]);
 
@@ -75,7 +84,10 @@ export default function MoneyTracker() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getYearMonthData(2023, 1);
+      const access_token = await getAccessTokenSilently();
+
+      if (!year || !month) throw new Error("Year or month not provided");
+      const data = await getYearMonthData(+year, +month, access_token);
       console.log(data);
       setIsLoading(false);
       setMoneyIn(data.moneyIn);
@@ -85,7 +97,7 @@ export default function MoneyTracker() {
     };
 
     fetchData().catch((error) => {
-      console.error(error);
+      throw error;
     });
   }, []);
 
