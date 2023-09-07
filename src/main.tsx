@@ -5,12 +5,18 @@ import { createRoot } from "react-dom/client";
 import { registerAllModules } from "handsontable/registry";
 import { ContextMenu, registerPlugin } from "handsontable/plugins";
 
-import { Auth0Provider } from "@auth0/auth0-react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import MoneyTracker from "app/money-tracker/money-tracker";
 import ErrorPage from "components/router-handlers/error-page";
 import { getYearMonthData } from "infrastructure/backend-service";
 import { auth0AuthProvider } from "./auth";
+import Homepage from "app/homepage";
+import { ReactNode } from "react";
 
 registerPlugin(ContextMenu);
 registerAllModules();
@@ -18,7 +24,15 @@ registerAllModules();
 const container = document.getElementById("root");
 if (!container) throw new Error("No root element found");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+function Protected({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth0();
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
 
+export default Protected;
 const router = createBrowserRouter([
   {
     path: "/",
@@ -26,12 +40,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <div>Welcome to the Spending Tracker!</div>,
+        element: <Homepage />,
       },
       {
         path: "/money-tracker/:year/:month",
         element: <MoneyTracker />,
+
         loader: async ({ params }) => {
+          const isAuthenticated = await auth0AuthProvider.isAuthenticated();
+          if (!isAuthenticated) return console.log("User is not authenticated");
+
           const access_token = await auth0AuthProvider.accessToken();
           if (!access_token) throw new Error("No access token");
           if (!params.year || !params.month)

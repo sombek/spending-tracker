@@ -27,6 +27,7 @@ export default function MoneyTracker() {
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
     budgetBreakdown.multiPayments,
   );
+
   // year, and month are going to be in the route
   const { year, month } = useParams();
   // on each update on the data, we need to update the state in backend

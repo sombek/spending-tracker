@@ -82,11 +82,13 @@ function ProfileDropdown() {
 }
 
 const Navbar = () => {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
   const navigation = [
     { name: "Home", href: "/", current: false },
     {
       name: "Money Tracker Dashboard",
-      href: "/money-tracker/2021/1",
+      href: `/money-tracker/${currentYear}/${currentMonth}`,
       current: false,
     },
     { name: "Reports", href: "/reports", current: false },
