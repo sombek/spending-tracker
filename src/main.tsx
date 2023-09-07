@@ -9,6 +9,8 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MoneyTracker from "app/money-tracker/money-tracker";
 import ErrorPage from "components/router-handlers/error-page";
+import { getYearMonthData } from "infrastructure/backend-service";
+import { auth0AuthProvider } from "./auth";
 
 registerPlugin(ContextMenu);
 registerAllModules();
@@ -29,6 +31,18 @@ const router = createBrowserRouter([
       {
         path: "/money-tracker/:year/:month",
         element: <MoneyTracker />,
+        loader: async ({ params }) => {
+          const access_token = await auth0AuthProvider.accessToken();
+          if (!access_token) throw new Error("No access token");
+          if (!params.year || !params.month)
+            throw new Error("Year or month not provided");
+
+          return await getYearMonthData(
+            +params.year,
+            +params.month,
+            access_token,
+          );
+        },
         errorElement: <ErrorPage />,
       },
     ],
