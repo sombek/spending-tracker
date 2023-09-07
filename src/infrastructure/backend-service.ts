@@ -1,6 +1,7 @@
 // use axios to make http requests
 // import axios from "axios";
 import axios from "axios";
+const backendApi = import.meta.env.VITE_BACKEND_API as string;
 
 export interface BudgetBreakdownJson {
   moneyIn: Transaction[];
@@ -26,7 +27,7 @@ export const upsertBudget = async (
   accessToken: string,
 ): Promise<void> => {
   const response = await axios.post(
-    `http://localhost:8000/budget-breakdown/${year}/${month}`,
+    `${backendApi}/budget-breakdown/${year}/${month}`,
     budgetState,
     {
       headers: {
@@ -43,7 +44,7 @@ export const getYearMonthData = async (
   accessToken: string,
 ): Promise<BudgetBreakdownJson> => {
   const response = await axios.get<BudgetBreakdownJson>(
-    `http://localhost:8000/budget-breakdown/${year}/${month}`,
+    `${backendApi}/budget-breakdown/${year}/${month}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
