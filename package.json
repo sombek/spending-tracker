@@ -43,6 +43,7 @@
     "@handsontable/react": "^13.1.0",
     "@headlessui/react": "1.7.17",
     "@heroicons/react": "2.0.18",
+    "@vercel/analytics": "^1.0.2",
     "ag-grid-community": "^30.1.0",
     "ag-grid-react": "^30.1.0",
     "axios": "^1.5.0",
