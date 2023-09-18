@@ -108,6 +108,15 @@ const DataTable = (props: DataTableProps) => {
             });
             if (value === null || value === undefined) {
               td.innerHTML = formatter.format(0);
+              // update the value in the data
+              if (props.isMultiPayments) {
+                const data = instance.getData() as MultiPaymentBreakdown[];
+                data[row].purchases = [];
+                instance.setDataAtRowProp(row, "purchases", []);
+              } else {
+                instance.setDataAtRowProp(row, "amount", 0);
+              }
+
               return td;
             }
 
