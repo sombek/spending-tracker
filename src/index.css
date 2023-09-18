@@ -14,3 +14,8 @@
 .handsontable .newRow {
   background-color: #e6e6e6;
 }
+
+* {
+  /* Use native apple font smoothing on everything else */
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
