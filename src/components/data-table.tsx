@@ -105,8 +105,22 @@ const DataTable = (props: DataTableProps) => {
             row,
             col,
             prop,
-            value: Transaction[] | number | null,
+            value: Transaction[] | number | null | string,
           ) => {
+            if (typeof value === "string") {
+              // it could be currency, and we need to convert it to number
+              value = value.replace(/[^0-9.-]+/g, "");
+              value = +value;
+
+              // update the value in the data
+              if (props.isMultiPayments) {
+                const data = instance.getData() as MultiPaymentBreakdown[];
+                data[row].purchases = [];
+                instance.setDataAtRowProp(row, "purchases", []);
+              }
+              instance.setDataAtRowProp(row, "amount", value);
+            }
+
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "SAR",
