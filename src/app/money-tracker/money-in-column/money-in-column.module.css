@@ -3,7 +3,9 @@
 }
 
 .moneyInTable {
-  @apply bg-gradient-to-bl from-white to-green-50;
+  /*@apply bg-gradient-to-bl from-white to-green-50;*/
+  background: linear-gradient(to bottom left, transparent, #f0fdf4),
+    url(https://grainy-gradients.vercel.app/noise.svg);
 
   padding: 10px;
   height: calc(100vh - (50px + 64px + 50px + 1px));

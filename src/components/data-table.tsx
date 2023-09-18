@@ -29,10 +29,7 @@ const DataTable = (props: DataTableProps) => {
     gridContext.addShortcut({
       group: "Insert",
       runOnlyIf: () => hot.getSelected() !== void 0,
-      keys: [
-        ["Alt", "ArrowDown"],
-        ["Alt", "ArrowUp"],
-      ],
+      keys: [["Alt", "ArrowDown"], ["Alt", "ArrowUp"], ["Enter"]],
 
       // @ts-ignore
       callback: (event: KeyboardEvent) => {
@@ -51,6 +48,13 @@ const DataTable = (props: DataTableProps) => {
           hot.alter("insert_row_above", selectedRow[0][0]);
           // change the selection to the newly inserted row
           hot.selectCell(selectedRow[0][0], 0);
+        } else if (event.key === "Enter") {
+          // insert a new row below the selected row if the selected row is the last row
+          if (selectedRow[0][0] === hot.countRows() - 1) {
+            hot.alter("insert_row_below", selectedRow[0][0]);
+            // change the selection to the newly inserted row
+            hot.selectCell(selectedRow[0][0] + 1, 0);
+          }
         }
       },
     });

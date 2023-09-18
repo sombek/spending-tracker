@@ -18,6 +18,11 @@ const shortcuts = [
     note: "Only works when there is a row selected",
   },
   {
+    action: "Add row below",
+    keys: ["Enter"],
+    note: "Only works when there is a row selected and the selected row is the last row",
+  },
+  {
     action: "Delete row",
     keys: ["⌘", "Option", "Delete or Backspace"],
   },
@@ -27,11 +32,14 @@ const ShortcutList = () => {
   return (
     <ul role="list" className="divide-y divide-gray-100">
       {shortcuts.map((person) => (
-        <li key={person.action} className="flex justify-between gap-x-6 py-2">
+        <li key={person.action} className="gap-x-6 py-2">
           <div className="flex min-w-0 gap-x-4">
             {/* Make the action and same line as the keys */}
             <div className="flex justify-center">
-              <p className="text-sm font-bold text-gray-900">
+              <p
+                className="text-sm font-bold text-gray-900"
+                style={{ lineHeight: "28px" }}
+              >
                 {person.action}:{" "}
               </p>
               <kbd className="bg-gray-100 rounded-md px-2 py-1 text-xs font-semibold text-gray-900 ml-5">
@@ -49,6 +57,12 @@ const ShortcutList = () => {
               </kbd>
             </div>
           </div>
+
+          {person.note && (
+            <div className="flex min-w-0 gap-x-4 mt-1 ml-8">
+              <p className="text-sm text-gray-500">{person.note}</p>
+            </div>
+          )}
         </li>
       ))}
     </ul>
