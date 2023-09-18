@@ -10,6 +10,8 @@ import {
 } from "infrastructure/backend-service";
 import { useLoaderData, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import ShortcutsModal from "app/money-tracker/shortcuts-modal";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 export default function MoneyTracker() {
   const { getAccessTokenSilently } = useAuth0();
@@ -64,7 +66,28 @@ export default function MoneyTracker() {
         },
       );
     });
-  }, [moneyIn, singlePayments, multiPayments]);
+  }, [
+    moneyIn,
+    singlePayments,
+    multiPayments,
+    year,
+    month,
+    getAccessTokenSilently,
+  ]);
+
+  const [open, setOpen] = useState(true);
+  // when click cmd + /, toggle the shortcuts modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey && event.key === "/") {
+        setOpen(!open);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   return (
     <div className={"flex flex-row"}>
@@ -76,6 +99,15 @@ export default function MoneyTracker() {
         multiPayments={multiPayments}
         setMultiPayments={setMultiPayments}
       />
+      <button
+        className={
+          "fixed bottom-20 left-0 m-4 p-2 rounded-full bg-blue-500 text-white"
+        }
+        onClick={() => setOpen(true)}
+      >
+        <QuestionMarkCircleIcon className={"h-6 w-6"} />
+      </button>
+      <ShortcutsModal setOpen={setOpen} open={open} />
     </div>
   );
 }
