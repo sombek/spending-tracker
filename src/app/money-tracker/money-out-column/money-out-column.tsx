@@ -88,36 +88,47 @@ const MoneyOutColumn = (props: {
         </div>
       </div>
       <div className={styles.sum}>
-        <div>Money Out</div>
-
-        <div>
-          <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "SAR",
-            }).format(sumOfMoneyOut)}
-          </span>
+        <div className={styles.sumText}>
+          <div
+            className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 `}
+          >
+            Money Out
+          </div>
+          <div>
+            <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "SAR",
+              }).format(sumOfMoneyOut)}
+            </span>
+          </div>
         </div>
 
-        <div>Money Remaining</div>
-        <div>
-          <span
-            className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 ${
-              sumOfMoneyRemaining >= 0
-                ? "bg-green-50 text-green-700"
-                : "bg-red-50 text-red-700"
-            } `}
+        <div className={styles.sumText}>
+          <div
+            className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 `}
           >
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "SAR",
-            }).format(sumOfMoneyRemaining)}
-            {sumOfMoneyRemaining >= 0 ? (
-              <span className="ml-1">💰</span>
-            ) : (
-              <span className="ml-1">💸</span>
-            )}
-          </span>
+            Money Remaining
+          </div>
+          <div>
+            <span
+              className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 ${
+                sumOfMoneyRemaining >= 0
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-red-700"
+              } `}
+            >
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "SAR",
+              }).format(sumOfMoneyRemaining)}
+              {sumOfMoneyRemaining >= 0 ? (
+                <span className="ml-1">💰</span>
+              ) : (
+                <span className="ml-1">💸</span>
+              )}
+            </span>
+          </div>
         </div>
       </div>
     </div>
