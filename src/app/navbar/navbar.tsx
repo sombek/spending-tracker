@@ -64,7 +64,13 @@ function ProfileDropdown() {
                 <div className="py-1">
                   <button
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left cursor-pointer"
-                    onClick={() => logout()}
+                    onClick={() =>
+                      logout({
+                        logoutParams: {
+                          returnTo: window.location.origin,
+                        },
+                      })
+                    }
                   >
                     <div className="flex items-center">
                       <ArrowRightOnRectangleIcon className="h-5 w-5 text-gray-400 mr-2" />

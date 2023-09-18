@@ -67,6 +67,10 @@ export const auth0AuthProvider: AuthProvider = {
   },
   async signOut() {
     const client = await getClient();
-    await client.logout();
+    await client.logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    });
   },
 };
