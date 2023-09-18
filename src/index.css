@@ -10,3 +10,7 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+.handsontable .newRow {
+  background-color: #e6e6e6;
+}

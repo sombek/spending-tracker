@@ -5,21 +5,21 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 const shortcuts = [
   {
     action: "Toggle Shortcuts Modal",
-    keys: "⌘ + /",
+    keys: ["⌘", "/"],
   },
   {
     action: "Add row above",
-    keys: "Option + ↑",
+    keys: ["Option", "↑"],
     note: "Only works when there is a row selected",
   },
   {
     action: "Add row below",
-    keys: "Option + ↓",
+    keys: ["Option", "↓"],
     note: "Only works when there is a row selected",
   },
   {
     action: "Delete row",
-    keys: "⌘ + Option + (Delete) Or (Backspace)",
+    keys: ["⌘", "Option", "Delete or Backspace"],
   },
 ];
 
@@ -35,7 +35,17 @@ const ShortcutList = () => {
                 {person.action}:{" "}
               </p>
               <kbd className="bg-gray-100 rounded-md px-2 py-1 text-xs font-semibold text-gray-900 ml-5">
-                {person.keys}
+                {person.keys.map((key, index) => (
+                  <Fragment key={key}>
+                    <span
+                      className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+                      key={key}
+                    >
+                      {key}
+                    </span>
+                    {index !== person.keys.length - 1 && " + "}
+                  </Fragment>
+                ))}
               </kbd>
             </div>
           </div>

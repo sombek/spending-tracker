@@ -1,5 +1,5 @@
 .moneyOutColumn {
-  @apply flex flex-col;
+  @apply flex flex-col bg-gray-100;
   width: 100%;
   height: 100%;
 }
@@ -13,21 +13,19 @@
 }
 
 .moneyOutContent {
-  @apply flex flex-row;
+  @apply flex flex-row bg-gradient-to-br from-white to-blue-50 overflow-hidden;
   height: calc(100vh - (64px + 50px + 51px));
 }
 
 .moneyOutOneTimePayment {
   width: 250px;
   overflow: auto;
-  background: white;
   padding: 10px;
 }
 
 .moneyOutContentCanvas {
   width: calc(100% - 250px);
   overflow: auto;
-  background: white;
   padding: 10px;
 }
 

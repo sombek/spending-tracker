@@ -75,7 +75,7 @@ export default function MoneyTracker() {
     getAccessTokenSilently,
   ]);
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   // when click cmd + /, toggle the shortcuts modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -90,7 +90,7 @@ export default function MoneyTracker() {
   }, [open]);
 
   return (
-    <div className={"flex flex-row"}>
+    <div className={"flex flex-row bg-white"}>
       <MoneyInColumn moneyIn={moneyIn} setMoneyIn={setMoneyIn} />
       <MoneyOutColumn
         moneyIn={moneyIn}

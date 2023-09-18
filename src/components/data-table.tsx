@@ -11,6 +11,7 @@ interface DataTableProps {
   onAfterChange: (changes: CellChange[] | null, source: string) => void;
   onAfterRemoveRow: () => void;
   isMultiPayments: boolean;
+  title?: string;
 }
 
 const DataTable = (props: DataTableProps) => {
@@ -91,7 +92,7 @@ const DataTable = (props: DataTableProps) => {
       >
         <HotColumn title={"Name"} data={"title"} />
         <HotColumn
-          title={"Amount"}
+          title={props.title ? props.title : "Amount"}
           data={props.isMultiPayments ? "purchases" : "amount"}
           readOnly={props.isMultiPayments}
           renderer={(
