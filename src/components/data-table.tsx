@@ -94,7 +94,15 @@ const DataTable = (props: DataTableProps) => {
         colWidths={"100%"}
         licenseKey="non-commercial-and-evaluation"
       >
-        <HotColumn title={"Name"} data={"title"} />
+        <HotColumn
+          title={"Name"}
+          data={"title"}
+          renderer={(instance, td) => {
+            // make the text bold
+            td.style.fontWeight = "500";
+            return td;
+          }}
+        />
         <HotColumn
           title={props.title ? props.title : "Amount"}
           data={props.isMultiPayments ? "purchases" : "amount"}
