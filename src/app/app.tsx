@@ -5,6 +5,7 @@ export default function App() {
   return (
     <>
       <div className="min-h-full">
+        {/*Update*/}
         <Navbar />
         <div className="mx-auto">
           <Outlet />
