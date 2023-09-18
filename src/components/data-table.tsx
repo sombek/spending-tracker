@@ -97,9 +97,15 @@ const DataTable = (props: DataTableProps) => {
         <HotColumn
           title={"Name"}
           data={"title"}
-          renderer={(instance, td) => {
+          renderer={(instance, td, row, col, prop, value) => {
             // make the text bold
             td.style.fontWeight = "500";
+            // clean the text from \n and \r
+            value = value.replace(/[\n\r]+/g, "");
+            td.innerHTML = value;
+            // // update the value in the data
+            // instance.setDataAtRowProp(row, "title", value);
+
             return td;
           }}
         />
