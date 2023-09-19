@@ -27,7 +27,7 @@ const Homepage = () => {
         className={[
           "border border-gray-200 rounded-md p-4 hover:border-gray-400 cursor-pointer " +
             "transition duration-500 ease-in-out transform " +
-            "hover:-translate-y-1 hover:scale-110 hover:shadow-lg hover:bg-gray-100",
+            "hover:-translate-y-1 hover:scale-100 hover:shadow-lg hover:bg-gray-100",
         ].join(" ")}
         onClick={() => navigate(link)}
       >
@@ -69,7 +69,7 @@ const Homepage = () => {
   };
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
-  const months = [...Array(currentMonth + 1).keys()].map((month) => {
+  const months = [7, 8].map((month) => {
     const monthName = new Date(0, month).toLocaleString("default", {
       month: "long",
     });
@@ -120,6 +120,9 @@ const Homepage = () => {
             <div className={"text-gray-400"}>{currentYear}</div>
           </div>
         </div>
+        <hr />
+        <br />
+
         <div className={"grid grid-cols-3 gap-4"}>{months}</div>
       </div>
     </Suspense>
