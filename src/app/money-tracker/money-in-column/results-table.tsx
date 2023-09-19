@@ -133,7 +133,7 @@ const ResultsTable = (props: {
               }
               // return the modified cell
               // if it's not days until salary
-              if (row !== 3) {
+              if (row !== 1) {
                 td.innerHTML = new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "SAR",
