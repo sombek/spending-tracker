@@ -116,6 +116,7 @@ const DataTable = (props: DataTableProps) => {
           title={props.title ? props.title : "Amount"}
           data={props.isMultiPayments ? "purchases" : "amount"}
           readOnly={props.isMultiPayments}
+          disableVisualSelection={props.isMultiPayments}
           renderer={(
             instance,
             td,
