@@ -1,14 +1,10 @@
-.moneyInColumnContent {
-  width: 250px;
-}
-
 .moneyInTable {
-  /*@apply bg-gradient-to-bl from-white to-green-50;*/
+  @apply overflow-auto;
+  width: 250px;
   background: linear-gradient(to bottom left, transparent, #f0fdf4),
     url(https://grainy-gradients.vercel.app/noise.svg);
 
   padding: 10px;
-  height: calc(100vh - (50px + 64px + 50px + 1px));
   border-right: 1px solid #e2e8f0;
 }
 
@@ -18,27 +14,5 @@
   background: white;
   width: 100%;
   height: 50px;
-  border: 1px solid #e6e6e6;
-}
-
-.listing {
-  width: 100%;
-  height: calc(100vh - (64px + 50px + 50px));
-  overflow-y: auto;
-
-  background: white;
-  border: 1px solid #e6e6e6;
-  border-top: none;
-}
-
-.listingItem {
-  @apply flex flex-col pl-5 pr-5 p-2;
-}
-
-.sum {
-  @apply flex flex-row justify-between items-center p-5;
-  height: 50px;
-
-  background: white;
   border: 1px solid #e6e6e6;
 }

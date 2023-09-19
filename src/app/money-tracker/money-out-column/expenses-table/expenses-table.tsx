@@ -32,8 +32,8 @@ const ExpensesTable = (props: {
   }, [width]);
 
   return (
-    <>
-      <div className={`grid ${getColumns} gap-4`}>
+    <div style={{ width: "100%" }}>
+      <div className={`grid ${getColumns}`}>
         {props.multiPayments.map((payment, index) => {
           const title = payment.title;
           if (
@@ -45,7 +45,15 @@ const ExpensesTable = (props: {
             return null;
 
           return (
-            <div key={index}>
+            <div
+              key={index}
+              style={{
+                maxWidth: 250,
+                marginTop: index === 0 ? 0 : "0.5rem",
+                paddingLeft: 10,
+                paddingRight: 10,
+              }}
+            >
               <CategoryTable
                 tableRef={props.tableRefs[title]}
                 title={title}
@@ -56,7 +64,7 @@ const ExpensesTable = (props: {
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 

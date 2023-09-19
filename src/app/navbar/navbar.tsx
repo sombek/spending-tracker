@@ -114,7 +114,7 @@ const Navbar = () => {
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="pl-10 ">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-12 items-center justify-between">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <img

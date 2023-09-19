@@ -36,7 +36,7 @@ const CategoryTable = (props: {
         <h2>{props.title}</h2>
       </span>
 
-      <div className="mt-2">
+      <div className="mt-2" style={{ maxWidth: 250 }}>
         <DataTable
           tableRef={props.tableRef}
           isMultiPayments={false}

@@ -30,6 +30,38 @@ const nthNumber = (number: number) => {
     : "";
 };
 
+function ErrorToast(props: { show: boolean }) {
+  if (!props.show) return null;
+
+  return (
+    <div
+      className={
+        "bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md fade-out"
+      }
+      style={{
+        visibility: props.show ? "visible" : "hidden",
+      }}
+      role="error"
+    >
+      <div className="flex">
+        <div className="py-1">
+          <svg
+            className="fill-current h-6 w-6 text-red-500 mr-4"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+          </svg>
+        </div>
+        <div>
+          <p className="font-bold">Failed to save data</p>
+          <p className="text-xs">Try to refresh the page</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MoneyTracker() {
   const { getAccessTokenSilently } = useAuth0();
 
@@ -55,7 +87,7 @@ export default function MoneyTracker() {
     singlePayments: useRef<HotTable>(null),
     multiPayments: useRef<HotTable>(null),
   });
-  // on budget breakdown update, update the state
+  // on budget breakdown update, update the state for table refs
   useEffect(() => {
     for (const multiPayment of multiPayments) {
       setTablesRefs((prev) => {
@@ -99,10 +131,13 @@ export default function MoneyTracker() {
     getAccessTokenSilently().then((access_token) => {
       upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(
         (error) => {
+          setShowErrorToast(true);
+          setTimeout(() => setShowErrorToast(false), 3000);
           console.error(error);
         },
       );
     });
+    // wait 3 seconds, then hide the error toast
   }, [
     moneyIn,
     singlePayments,
@@ -194,12 +229,13 @@ export default function MoneyTracker() {
     });
   }, [month]);
 
+  const [showErrorToast, setShowErrorToast] = useState(false);
   return (
     <>
       <div>
         <div className={styles.moneyInHeader}>
           <div>
-            📆 Budget from
+            📆 Money Track from
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
               {lastMonthText} 26{nthNumber(26)}
             </span>
@@ -210,8 +246,18 @@ export default function MoneyTracker() {
           </div>
         </div>
       </div>
-      <div className={"flex flex-row"}>
+      <div
+        className={"flex flex-row"}
+        style={{
+          height: "calc(100vh - (48px + 50px))",
+        }}
+      >
         <MoneyInColumn
+          tableRefs={tablesRefs}
+          singlePayments={singlePayments}
+          setSinglePayments={setSinglePayments}
+          multiPayments={multiPayments}
+          setMultiPayments={setMultiPayments}
           tableRef={tablesRefs.moneyIn}
           moneyIn={moneyIn}
           setMoneyIn={setMoneyIn}
@@ -225,10 +271,13 @@ export default function MoneyTracker() {
           setMultiPayments={setMultiPayments}
         />
       </div>
-
+      {/*Make bottom right, and h: 1/4, w: 1/4*/}
+      <div className={"fixed bottom-0 right-0 m-4 p-2 fade-out"}>
+        <ErrorToast show={showErrorToast} />
+      </div>
       <button
         className={
-          "fixed bottom-20 left-0 m-4 p-2 rounded-full bg-blue-500 text-white"
+          "fixed bottom-24 right-0 m-4 p-2 rounded-full bg-blue-500 text-white"
         }
         onClick={() => setOpen(true)}
       >
