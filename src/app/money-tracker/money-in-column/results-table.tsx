@@ -7,7 +7,7 @@ const ResultsTable = (props: {
   totalMoneyLeft: number;
   daysUntilNextPaycheck: number;
 }) => {
-  const data = useMemo(() => {
+  const data1 = useMemo(() => {
     return [
       {
         title: "Total Money In",
@@ -17,21 +17,21 @@ const ResultsTable = (props: {
         title: "Total Money Out",
         amount: props.totalMoneyOut,
       },
+    ];
+  }, [props.totalMoneyIn, props.totalMoneyOut]);
+
+  const data2 = useMemo(() => {
+    return [
       {
         title: "Total Money Left",
         amount: props.totalMoneyLeft,
       },
       {
-        title: "Days Until Salary",
+        title: "Days Until Next Paycheck",
         amount: props.daysUntilNextPaycheck,
       },
     ];
-  }, [
-    props.totalMoneyIn,
-    props.totalMoneyOut,
-    props.totalMoneyLeft,
-    props.daysUntilNextPaycheck,
-  ]);
+  }, [props.totalMoneyLeft, props.daysUntilNextPaycheck]);
   return (
     <div>
       <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-900 ring-1 ring-inset ring-indigo-700/10">
@@ -39,7 +39,62 @@ const ResultsTable = (props: {
       </span>
       <div className="mt-2">
         <HotTable
-          data={data}
+          data={data1}
+          colHeaders={false}
+          rowHeaders={false}
+          width="100%"
+          height="auto"
+          autoColumnSize={true}
+          readOnly={true}
+          disableVisualSelection={true}
+          contextMenu={true}
+          stretchH={"all"}
+          colWidths={"100%"}
+          licenseKey="non-commercial-and-evaluation"
+        >
+          <HotColumn
+            data="title"
+            title="Title"
+            width="100%"
+            renderer={(instance, td, row, col, prop, value) => {
+              // slighly darker yellow for even and green for odd
+              td.style.background = "#FDE6BB";
+              // bold the text
+              td.style.fontWeight = "bold";
+              // return the modified cell
+              td.innerHTML = value;
+              return value;
+            }}
+          />
+          <HotColumn
+            data="amount"
+            title="Amount"
+            width="90%"
+            renderer={(instance, td, row, col, prop, value) => {
+              // show the amount in green if it's positive
+              // show the amount in red if it's negative
+              if (value < 0) {
+                td.style.color = "#EF4444";
+              }
+              // return the modified cell
+              // if it's not days until salary
+              if (row !== 3) {
+                td.innerHTML = new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "SAR",
+                }).format(value);
+              } else {
+                // days or day
+                td.innerHTML = value + " day" + (value > 1 ? "s" : "");
+              }
+              return value;
+            }}
+          />
+        </HotTable>
+      </div>
+      <div className="mt-2">
+        <HotTable
+          data={data2}
           colHeaders={false}
           rowHeaders={false}
           width="100%"
