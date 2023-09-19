@@ -13,9 +13,9 @@ const ExpensesTable = (props: {
   const [width, setWidth] = useState(window.innerWidth);
   // if there is enough space, show 3 columns, otherwise show 2 columns, otherwise show 1 column
   const getColumns = useMemo(() => {
-    if (width > 1260) return 3;
-    else if (width > 1010) return 2;
-    else return 1;
+    if (width > 1260) return "grid-cols-3";
+    else if (width > 1010) return "grid-cols-2";
+    else return "grid-cols-1";
   }, [width]);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const ExpensesTable = (props: {
 
   return (
     <>
-      <div className={`grid grid-cols-${getColumns} gap-4`}>
+      <div className={`grid ${getColumns} gap-4`}>
         {props.multiPayments.map((payment, index) => {
           const title = payment.title;
           if (
