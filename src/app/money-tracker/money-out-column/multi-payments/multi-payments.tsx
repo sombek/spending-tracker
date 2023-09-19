@@ -20,6 +20,7 @@ const MultiPayments = (props: {
     // if it doesn't exist
     props.data.forEach((category) => {
       if (category.purchases === undefined) category.purchases = [];
+      if (category.title === null) category.title = "";
       copyOfData.push(category);
     });
 
