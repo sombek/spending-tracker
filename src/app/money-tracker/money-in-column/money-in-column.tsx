@@ -1,9 +1,11 @@
 import styles from "./money-in-column.module.css";
-import { useMemo } from "react";
+import { RefObject, useMemo } from "react";
 import DataTable from "components/data-table";
 import { Transaction } from "infrastructure/backend-service";
+import { HotTable } from "@handsontable/react";
 
 const MoneyInColumn = (props: {
+  tableRef: RefObject<HotTable>;
   moneyIn: Transaction[];
   setMoneyIn: (data: Transaction[]) => void;
 }) => {
@@ -28,6 +30,7 @@ const MoneyInColumn = (props: {
         </div>
         <div className={styles.moneyInTable}>
           <DataTable
+            tableRef={props.tableRef}
             isMultiPayments={false}
             data={props.moneyIn}
             // data is being updated by the hot table

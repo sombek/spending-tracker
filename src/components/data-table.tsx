@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { CellChange } from "handsontable/common";
 import {
@@ -12,10 +12,12 @@ interface DataTableProps {
   onAfterRemoveRow: () => void;
   isMultiPayments: boolean;
   title?: string;
+  tableRef?: RefObject<HotTable>;
 }
 
 const DataTable = (props: DataTableProps) => {
-  const hotTableComponentRef = useRef<HotTable>(null);
+  let hotTableComponentRef = useRef<HotTable>(null);
+  if (props.tableRef !== undefined) hotTableComponentRef = props.tableRef;
 
   useEffect(() => {
     const current = hotTableComponentRef.current;

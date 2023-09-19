@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { RefObject, useState } from "react";
 
 import DataTable from "components/data-table";
 import {
   MultiPaymentBreakdown,
   Transaction,
 } from "infrastructure/backend-service";
+import { HotTable } from "@handsontable/react";
 
 const CategoryTable = (props: {
+  tableRef?: RefObject<HotTable>;
   title: string;
   multiPayments: MultiPaymentBreakdown[];
   setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
@@ -36,6 +38,7 @@ const CategoryTable = (props: {
 
       <div className="mt-2">
         <DataTable
+          tableRef={props.tableRef}
           isMultiPayments={false}
           data={categoryPurchases}
           onAfterChange={(changes) => {

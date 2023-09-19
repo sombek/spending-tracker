@@ -1,14 +1,21 @@
 import ExpensesTable from "app/money-tracker/money-out-column/expenses-table/expenses-table";
 import styles from "app/money-tracker/money-out-column/money-out-column.module.css";
 import OneTimePayments from "app/money-tracker/money-out-column/one-time-payments/one-time-payments";
-import { useMemo } from "react";
+import { RefObject, useMemo } from "react";
 import MultiPayments from "app/money-tracker/money-out-column/multi-payments/multi-payments";
 import {
   MultiPaymentBreakdown,
   Transaction,
 } from "infrastructure/backend-service";
+import { HotTable } from "@handsontable/react";
 
 const MoneyOutColumn = (props: {
+  tableRefs: {
+    moneyIn: RefObject<HotTable>;
+    singlePayments: RefObject<HotTable>;
+    multiPayments: RefObject<HotTable>;
+    [key: string]: RefObject<HotTable>;
+  };
   moneyIn: Transaction[];
   singlePayments: Transaction[];
   setSinglePayments: (data: Transaction[]) => void;
@@ -70,11 +77,13 @@ const MoneyOutColumn = (props: {
       <div className={styles.moneyOutContent}>
         <div className={styles.moneyOutOneTimePayment}>
           <OneTimePayments
+            tableRef={props.tableRefs.singlePayments}
             singlePayments={props.singlePayments}
             setSinglePayments={props.setSinglePayments}
           />
           <br />
           <MultiPayments
+            tableRef={props.tableRefs.multiPayments}
             setMultiPayments={props.setMultiPayments}
             data={props.multiPayments}
           />
@@ -82,6 +91,7 @@ const MoneyOutColumn = (props: {
 
         <div className={styles.moneyOutContentCanvas}>
           <ExpensesTable
+            tableRefs={props.tableRefs}
             multiPayments={props.multiPayments}
             setMultiPayments={props.setMultiPayments}
           />

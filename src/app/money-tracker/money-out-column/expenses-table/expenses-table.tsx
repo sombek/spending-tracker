@@ -3,9 +3,16 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import "reactflow/dist/style.css";
 import CategoryTable from "app/money-tracker/money-out-column/expenses-table/category-table";
 import { MultiPaymentBreakdown } from "infrastructure/backend-service";
-import { useEffect, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useState } from "react";
+import { HotTable } from "@handsontable/react";
 
 const ExpensesTable = (props: {
+  tableRefs: {
+    moneyIn: RefObject<HotTable>;
+    singlePayments: RefObject<HotTable>;
+    multiPayments: RefObject<HotTable>;
+    [key: string]: RefObject<HotTable>;
+  };
   setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
   multiPayments: MultiPaymentBreakdown[];
 }) => {
@@ -40,6 +47,7 @@ const ExpensesTable = (props: {
           return (
             <div key={index}>
               <CategoryTable
+                tableRef={props.tableRefs[title]}
                 title={title}
                 multiPayments={props.multiPayments}
                 setMultiPayments={props.setMultiPayments}

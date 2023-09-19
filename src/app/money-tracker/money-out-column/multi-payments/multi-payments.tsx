@@ -2,10 +2,12 @@ import DataTable from "components/data-table";
 import { CellChange } from "handsontable/common";
 import { MultiPaymentBreakdown } from "infrastructure/backend-service";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import styles from "./multi-payments.module.css";
+import { HotTable } from "@handsontable/react";
 
 const MultiPayments = (props: {
+  tableRef: RefObject<HotTable>;
   setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
   data: MultiPaymentBreakdown[];
 }) => {
@@ -64,6 +66,7 @@ const MultiPayments = (props: {
 
       <div className="mt-2">
         <DataTable
+          tableRef={props.tableRef}
           title={"Sum"}
           isMultiPayments={true}
           data={props.data}

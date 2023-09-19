@@ -1,6 +1,6 @@
 import MoneyInColumn from "app/money-tracker/money-in-column/money-in-column";
 import MoneyOutColumn from "app/money-tracker/money-out-column/money-out-column";
-import { useEffect, useState } from "react";
+import { createRef, RefObject, useEffect, useRef, useState } from "react";
 
 import {
   BudgetBreakdownJson,
@@ -12,6 +12,7 @@ import { useLoaderData, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import ShortcutsModal from "app/money-tracker/shortcuts-modal";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { HotTable } from "@handsontable/react";
 
 export default function MoneyTracker() {
   const { getAccessTokenSilently } = useAuth0();
@@ -29,6 +30,26 @@ export default function MoneyTracker() {
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
     budgetBreakdown.multiPayments,
   );
+  const [tablesRefs, setTablesRefs] = useState<{
+    moneyIn: RefObject<HotTable>;
+    singlePayments: RefObject<HotTable>;
+    multiPayments: RefObject<HotTable>;
+  }>({
+    moneyIn: useRef<HotTable>(null),
+    singlePayments: useRef<HotTable>(null),
+    multiPayments: useRef<HotTable>(null),
+  });
+  // on budget breakdown update, update the state
+  useEffect(() => {
+    for (const multiPayment of multiPayments) {
+      setTablesRefs((prev) => {
+        return {
+          ...prev,
+          [multiPayment.title]: createRef<HotTable>(),
+        };
+      });
+    }
+  }, [multiPayments]);
 
   // year, and month are going to be in the route
   const { year, month } = useParams();
@@ -89,10 +110,68 @@ export default function MoneyTracker() {
     };
   }, [open]);
 
+  useEffect(() => {
+    // if clicked option + 1 select money in table
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // right arrow
+      if (event.altKey && event.key === "ArrowRight") {
+        let selectedTable = tablesRefs.moneyIn;
+        let getSelectedTable = false;
+        for (const tableRef of Object.values(tablesRefs)) {
+          if (getSelectedTable) {
+            selectedTable = tableRef;
+            break;
+          }
+
+          if (tableRef.current === null) continue;
+          const hot = tableRef.current.hotInstance;
+          if (hot === null) continue;
+          if (hot.getSelected()) {
+            // deselect the current table
+            hot.deselectCell();
+            getSelectedTable = true;
+          }
+        }
+        selectedTable.current?.hotInstance?.selectCell(0, 0);
+      }
+      // left arrow
+      else if (event.altKey && event.key === "ArrowLeft") {
+        let selectedTable = tablesRefs.multiPayments;
+        let getSelectedTable = false;
+        for (const tableRef of Object.values(tablesRefs).reverse()) {
+          if (getSelectedTable) {
+            selectedTable = tableRef;
+            break;
+          }
+
+          if (tableRef.current === null) continue;
+          const hot = tableRef.current.hotInstance;
+          if (hot === null) continue;
+          if (hot.getSelected()) {
+            // deselect the current table
+            hot.deselectCell();
+            getSelectedTable = true;
+          }
+        }
+        selectedTable.current?.hotInstance?.selectCell(0, 0);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [tablesRefs]);
+
   return (
     <div className={"flex flex-row bg-white"}>
-      <MoneyInColumn moneyIn={moneyIn} setMoneyIn={setMoneyIn} />
+      <MoneyInColumn
+        tableRef={tablesRefs.moneyIn}
+        moneyIn={moneyIn}
+        setMoneyIn={setMoneyIn}
+      />
       <MoneyOutColumn
+        tableRefs={tablesRefs}
         moneyIn={moneyIn}
         singlePayments={singlePayments}
         setSinglePayments={setSinglePayments}
