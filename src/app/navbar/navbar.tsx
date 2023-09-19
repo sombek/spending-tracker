@@ -95,7 +95,7 @@ const Navbar = () => {
 
   if (isAuthenticated) {
     navigation.push({
-      name: `Money Tracker - 📆 Current Month`,
+      name: `Money Tracker - Current Month`,
       href: `/money-tracker/${currentYear}/${currentMonth}`,
       current: false,
     });
@@ -103,19 +103,9 @@ const Navbar = () => {
 
   // decide if the link is active or not based on the current path from react router
   const { pathname } = useLocation();
-  if (pathname.includes("/money-tracker")) {
-    navigation[1].current = true;
-    const selectedMonth = pathname.split("/")[3];
-    const selectedMonthText = new Date(0, +selectedMonth - 1).toLocaleString(
-      "default",
-      {
-        month: "long",
-      },
-    );
-    navigation[1].name = `Money Tracker - 📆 ${selectedMonthText}`;
-  } else {
-    navigation[0].current = true;
-  }
+  navigation.forEach((item) => {
+    item.current = pathname === item.href;
+  });
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");

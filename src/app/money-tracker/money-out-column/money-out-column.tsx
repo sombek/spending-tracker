@@ -66,14 +66,6 @@ const MoneyOutColumn = (props: {
 
   return (
     <div className={styles.moneyOutColumn}>
-      <div className={styles.moneyOutHeader}>
-        <div className={styles.moneyIn}>
-          <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-            💸 Money Out
-          </span>
-        </div>
-      </div>
-
       <div className={styles.moneyOutContent}>
         <div className={styles.moneyOutOneTimePayment}>
           <OneTimePayments

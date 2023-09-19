@@ -1,6 +1,13 @@
 import MoneyInColumn from "app/money-tracker/money-in-column/money-in-column";
 import MoneyOutColumn from "app/money-tracker/money-out-column/money-out-column";
-import { createRef, RefObject, useEffect, useRef, useState } from "react";
+import {
+  createRef,
+  RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   BudgetBreakdownJson,
@@ -13,6 +20,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ShortcutsModal from "app/money-tracker/shortcuts-modal";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { HotTable } from "@handsontable/react";
+import styles from "app/money-tracker/money-in-column/money-in-column.module.css";
+
+const nthNumber = (number: number) => {
+  return number > 0
+    ? ["th", "st", "nd", "rd"][
+        (number > 3 && number < 21) || number % 10 > 3 ? 0 : number % 10
+      ]
+    : "";
+};
 
 export default function MoneyTracker() {
   const { getAccessTokenSilently } = useAuth0();
@@ -162,22 +178,54 @@ export default function MoneyTracker() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [tablesRefs]);
+  const lastMonthText = useMemo(() => {
+    if (month === undefined) throw new Error("Month is undefined");
+    if (month === "1") return "December";
+    const monthNumber = +month - 2;
+    return new Date(0, monthNumber).toLocaleString("default", {
+      month: "long",
+    });
+  }, [month]);
+  const thisMonthText = useMemo(() => {
+    if (month === undefined) throw new Error("Month is undefined");
+    if (month === "12") return "January";
+    return new Date(0, +month - 1).toLocaleString("default", {
+      month: "long",
+    });
+  }, [month]);
 
   return (
-    <div className={"flex flex-row bg-white"}>
-      <MoneyInColumn
-        tableRef={tablesRefs.moneyIn}
-        moneyIn={moneyIn}
-        setMoneyIn={setMoneyIn}
-      />
-      <MoneyOutColumn
-        tableRefs={tablesRefs}
-        moneyIn={moneyIn}
-        singlePayments={singlePayments}
-        setSinglePayments={setSinglePayments}
-        multiPayments={multiPayments}
-        setMultiPayments={setMultiPayments}
-      />
+    <>
+      <div>
+        <div className={styles.moneyInHeader}>
+          <div>
+            📆 Budget from
+            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
+              {lastMonthText} 26{nthNumber(26)}
+            </span>
+            To
+            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
+              {thisMonthText} 26{nthNumber(26)}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className={"flex flex-row"}>
+        <MoneyInColumn
+          tableRef={tablesRefs.moneyIn}
+          moneyIn={moneyIn}
+          setMoneyIn={setMoneyIn}
+        />
+        <MoneyOutColumn
+          tableRefs={tablesRefs}
+          moneyIn={moneyIn}
+          singlePayments={singlePayments}
+          setSinglePayments={setSinglePayments}
+          multiPayments={multiPayments}
+          setMultiPayments={setMultiPayments}
+        />
+      </div>
+
       <button
         className={
           "fixed bottom-20 left-0 m-4 p-2 rounded-full bg-blue-500 text-white"
@@ -187,6 +235,6 @@ export default function MoneyTracker() {
         <QuestionMarkCircleIcon className={"h-6 w-6"} />
       </button>
       <ShortcutsModal setOpen={setOpen} open={open} />
-    </div>
+    </>
   );
 }
