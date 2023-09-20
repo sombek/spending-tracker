@@ -13,7 +13,7 @@
 .rightSide {
   @apply overflow-auto;
   background: linear-gradient(to bottom right, transparent, rgb(219 234 254)),
-    url(https://grainy-gradients.vercel.app/noise.svg);
+    url(/noise.svg);
 
   width: calc(100% - 300px);
   padding: 10px;
@@ -24,7 +24,7 @@
   @apply overflow-auto;
   width: 300px;
   background: linear-gradient(to bottom left, transparent, #f0fdf4),
-    url(https://grainy-gradients.vercel.app/noise.svg);
+    url(/noise.svg);
 
   padding: 10px;
   border-right: 1px solid #e2e8f0;

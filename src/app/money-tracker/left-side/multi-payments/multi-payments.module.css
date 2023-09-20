@@ -9,10 +9,13 @@
   font-size: 13px;
   visibility: hidden;
   width: 150px;
-  /*use tailwindcss colors blue ish with opacity 80%*/
-  background-color: rgba(59, 130, 246, 0.9);
-  /*add blur*/
-  backdrop-filter: blur(2px);
+  background-image: linear-gradient(
+      315deg,
+      rgba(30, 65, 121, 0.6) 0%,
+      rgba(61, 37, 114, 0.6) 74%
+    ),
+    url("/noise.svg");
+  backdrop-filter: blur(1px) saturate(100%) contrast(45%) brightness(120%);
 
   color: #fff;
   border-radius: 6px;
@@ -30,6 +33,7 @@
   border-width: 5px;
   border-style: solid;
 }
+
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
