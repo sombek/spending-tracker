@@ -1,5 +1,5 @@
-import MoneyInColumn from "app/money-tracker/money-in-column/money-in-column";
-import MoneyOutColumn from "app/money-tracker/money-out-column/money-out-column";
+import MoneyInColumn from "app/money-tracker/left-side/money-in-column";
+import ExpensesArea from "app/money-tracker/right-side/expenses-area";
 import {
   createRef,
   RefObject,
@@ -20,7 +20,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ShortcutsModal from "app/money-tracker/shortcuts-modal";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { HotTable } from "@handsontable/react";
-import styles from "app/money-tracker/money-in-column/money-in-column.module.css";
+import styles from "app/money-tracker/left-side/money-in-column.module.css";
 
 const nthNumber = (number: number) => {
   return number > 0
@@ -161,8 +161,8 @@ export default function MoneyTracker() {
     };
   }, [open]);
 
+  // alt + right or left to jump to another table
   useEffect(() => {
-    // if clicked option + 1 select money in table
     const handleKeyDown = (event: KeyboardEvent) => {
       // right arrow
       if (event.altKey && event.key === "ArrowRight") {
@@ -187,7 +187,7 @@ export default function MoneyTracker() {
       }
       // left arrow
       else if (event.altKey && event.key === "ArrowLeft") {
-        let selectedTable = tablesRefs.multiPayments;
+        let selectedTable = Object.values(tablesRefs).reverse()[0];
         let getSelectedTable = false;
         for (const tableRef of Object.values(tablesRefs).reverse()) {
           if (getSelectedTable) {
@@ -262,11 +262,8 @@ export default function MoneyTracker() {
           moneyIn={moneyIn}
           setMoneyIn={setMoneyIn}
         />
-        <MoneyOutColumn
+        <ExpensesArea
           tableRefs={tablesRefs}
-          moneyIn={moneyIn}
-          singlePayments={singlePayments}
-          setSinglePayments={setSinglePayments}
           multiPayments={multiPayments}
           setMultiPayments={setMultiPayments}
         />

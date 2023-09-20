@@ -1,6 +1,6 @@
 .moneyInTable {
   @apply overflow-auto;
-  width: 250px;
+  width: 300px;
   background: linear-gradient(to bottom left, transparent, #f0fdf4),
     url(https://grainy-gradients.vercel.app/noise.svg);
 

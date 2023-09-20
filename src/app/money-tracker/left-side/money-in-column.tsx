@@ -6,16 +6,15 @@ import {
   Transaction,
 } from "infrastructure/backend-service";
 import { HotTable } from "@handsontable/react";
-import OneTimePayments from "app/money-tracker/money-out-column/one-time-payments/one-time-payments";
-import MultiPayments from "app/money-tracker/money-out-column/multi-payments/multi-payments";
-import ResultsTable from "app/money-tracker/money-in-column/results-table";
+import OneTimePayments from "app/money-tracker/left-side/one-time-payments/one-time-payments";
+import MultiPayments from "app/money-tracker/left-side/multi-payments/multi-payments";
+import ResultsTable from "app/money-tracker/left-side/results-table";
 
 const MoneyInColumn = (props: {
   tableRefs: {
     moneyIn: RefObject<HotTable>;
     singlePayments: RefObject<HotTable>;
     multiPayments: RefObject<HotTable>;
-    [key: string]: RefObject<HotTable>;
   };
   singlePayments: Transaction[];
   setSinglePayments: (data: Transaction[]) => void;

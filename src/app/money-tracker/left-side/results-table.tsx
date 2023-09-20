@@ -34,8 +34,8 @@ const ResultsTable = (props: {
   }, [props.totalMoneyLeft, props.daysUntilNextPaycheck]);
   return (
     <div>
-      <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-900 ring-1 ring-inset ring-indigo-700/10">
-        Results
+      <span className="inline-flex items-center rounded-md bg-lime-100 px-2 py-1 text-xs font-medium text-lime-900 ring-1 ring-inset ring-lime-700/10">
+        🚉 Results
       </span>
       <div className="mt-2">
         <HotTable

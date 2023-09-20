@@ -1,7 +1,7 @@
 import { CellChange } from "handsontable/common";
 import DataTable from "components/data-table";
 import { Transaction } from "infrastructure/backend-service";
-import styles from "app/money-tracker/money-out-column/multi-payments/multi-payments.module.css";
+import styles from "app/money-tracker/left-side/multi-payments/multi-payments.module.css";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { RefObject } from "react";
 import { HotTable } from "@handsontable/react";
