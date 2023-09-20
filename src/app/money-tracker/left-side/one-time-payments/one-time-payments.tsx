@@ -7,6 +7,7 @@ import { RefObject } from "react";
 import { HotTable } from "@handsontable/react";
 
 const OneTimePayments = (props: {
+  scrollRef: RefObject<HTMLDivElement> | null;
   tableRef: RefObject<HotTable>;
   singlePayments: Transaction[];
   setSinglePayments: (data: Transaction[]) => void;
@@ -37,6 +38,7 @@ const OneTimePayments = (props: {
       </div>
       <div className="mt-2">
         <DataTable
+          scrollRef={props.scrollRef}
           tableRef={props.tableRef}
           isMultiPayments={false}
           data={props.singlePayments}

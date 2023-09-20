@@ -1,17 +1,14 @@
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
-import "reactflow/dist/style.css";
-import CategoryTable from "app/money-tracker/right-side/expenses-table/category-table";
-import { MultiPaymentBreakdown } from "infrastructure/backend-service";
 import { RefObject, useEffect, useMemo, useState } from "react";
 import { HotTable } from "@handsontable/react";
+import { MultiPaymentBreakdown } from "infrastructure/backend-service";
+import CategoryTable from "app/money-tracker/right-side/category-table";
 
-const ExpensesTable = (props: {
+const RightSide = (props: {
   tableRefs: {
     [key: string]: RefObject<HotTable>;
   };
-  setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
   multiPayments: MultiPaymentBreakdown[];
+  setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
 }) => {
   // get page width
   const [width, setWidth] = useState(window.innerWidth);
@@ -70,4 +67,4 @@ const ExpensesTable = (props: {
   );
 };
 
-export default ExpensesTable;
+export default RightSide;

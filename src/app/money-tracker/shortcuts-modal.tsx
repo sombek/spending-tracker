@@ -26,7 +26,7 @@ const shortcuts = [
     note: "Only works when there is a row selected",
   },
   {
-    action: "Add row below",
+    action: "Add row below -",
     keys: ["Enter"],
     note: "Only works when there is a row selected and the selected row is the last row",
   },

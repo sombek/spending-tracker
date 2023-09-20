@@ -1,6 +1,6 @@
-import MoneyInColumn from "app/money-tracker/left-side/money-in-column";
-import ExpensesArea from "app/money-tracker/right-side/expenses-area";
+import LeftSide from "app/money-tracker/left-side/left-side";
 import {
+  createContext,
   createRef,
   RefObject,
   useEffect,
@@ -20,7 +20,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ShortcutsModal from "app/money-tracker/shortcuts-modal";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { HotTable } from "@handsontable/react";
-import styles from "app/money-tracker/left-side/money-in-column.module.css";
+import styles from "app/money-tracker/money-tracker.module.css";
+import RightSide from "app/money-tracker/right-side/right-side";
 
 const nthNumber = (number: number) => {
   return number > 0
@@ -62,7 +63,19 @@ function ErrorToast(props: { show: boolean }) {
   );
 }
 
+const RightSideScrollContext = createContext<RefObject<HTMLDivElement> | null>(
+  null,
+);
+const LeftSideScrollContext = createContext<RefObject<HTMLDivElement> | null>(
+  null,
+);
+
+export { RightSideScrollContext, LeftSideScrollContext };
+
 export default function MoneyTracker() {
+  const rightSideScrollRef = useRef<HTMLDivElement>(null);
+  const leftSideScrollRef = useRef<HTMLDivElement>(null);
+
   const { getAccessTokenSilently } = useAuth0();
 
   const budgetBreakdown = useLoaderData() as BudgetBreakdownJson;
@@ -233,7 +246,7 @@ export default function MoneyTracker() {
   return (
     <>
       <div>
-        <div className={styles.moneyInHeader}>
+        <div className={styles.moneyTrackerHeader}>
           <div>
             📆 Money Track from
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
@@ -246,35 +259,42 @@ export default function MoneyTracker() {
           </div>
         </div>
       </div>
-      <div
-        className={"flex flex-row"}
-        style={{
-          height: "calc(100vh - (48px + 50px))",
-        }}
-      >
-        <MoneyInColumn
-          tableRefs={tablesRefs}
-          singlePayments={singlePayments}
-          setSinglePayments={setSinglePayments}
-          multiPayments={multiPayments}
-          setMultiPayments={setMultiPayments}
-          tableRef={tablesRefs.moneyIn}
-          moneyIn={moneyIn}
-          setMoneyIn={setMoneyIn}
-        />
-        <ExpensesArea
-          tableRefs={tablesRefs}
-          multiPayments={multiPayments}
-          setMultiPayments={setMultiPayments}
-        />
+
+      <div className={styles.content}>
+        <div className={styles.leftSide} ref={leftSideScrollRef}>
+          <LeftSideScrollContext.Provider value={leftSideScrollRef}>
+            <LeftSide
+              tableRefs={tablesRefs}
+              singlePayments={singlePayments}
+              setSinglePayments={setSinglePayments}
+              multiPayments={multiPayments}
+              setMultiPayments={setMultiPayments}
+              tableRef={tablesRefs.moneyIn}
+              moneyIn={moneyIn}
+              setMoneyIn={setMoneyIn}
+            />
+          </LeftSideScrollContext.Provider>
+        </div>
+
+        <div className={styles.rightSide} ref={rightSideScrollRef}>
+          <RightSideScrollContext.Provider value={rightSideScrollRef}>
+            <RightSide
+              tableRefs={tablesRefs}
+              multiPayments={multiPayments}
+              setMultiPayments={setMultiPayments}
+            />
+          </RightSideScrollContext.Provider>
+        </div>
       </div>
+
       {/*Make bottom right, and h: 1/4, w: 1/4*/}
       <div className={"fixed bottom-0 right-0 m-4 p-2 fade-out"}>
         <ErrorToast show={showErrorToast} />
       </div>
+
       <button
         className={
-          "fixed bottom-24 right-0 m-4 p-2 rounded-full bg-blue-500 text-white"
+          "fixed bottom-10 right-0 m-4 p-2 rounded-full bg-blue-500 text-white"
         }
         onClick={() => setOpen(true)}
       >

@@ -7,6 +7,7 @@ import {
 } from "infrastructure/backend-service";
 
 interface DataTableProps {
+  scrollRef?: RefObject<HTMLDivElement> | null;
   data: MultiPaymentBreakdown[] | Transaction[];
   onAfterChange: (changes: CellChange[] | null, source: string) => void;
   onAfterRemoveRow: () => void;
@@ -27,6 +28,16 @@ const DataTable = (props: DataTableProps) => {
 
     const gridContext = hot.getShortcutManager().getContext("grid");
     if (gridContext === undefined) throw new Error("No grid context found");
+    const scrollToCell = (cell: HTMLTableCellElement | null) => {
+      if (cell === null) throw new Error("No cell found");
+      if (props.scrollRef === undefined || props.scrollRef === null) return;
+      if (props.scrollRef.current === null) return;
+      // scroll to the newly inserted row
+      props.scrollRef.current.scrollTo({
+        top: cell.offsetTop,
+        behavior: "smooth",
+      });
+    };
 
     gridContext.addShortcut({
       group: "Insert",
@@ -43,6 +54,9 @@ const DataTable = (props: DataTableProps) => {
           hot.alter("insert_row_below", selectedRow[0][0]);
           // change the selection to the newly inserted row
           hot.selectCell(selectedRow[0][0] + 1, 0);
+
+          const cell = hot.getCell(selectedRow[0][0] + 1, 0);
+          scrollToCell(cell);
         }
         //
         else if (event.key === "ArrowUp") {
@@ -50,12 +64,18 @@ const DataTable = (props: DataTableProps) => {
           hot.alter("insert_row_above", selectedRow[0][0]);
           // change the selection to the newly inserted row
           hot.selectCell(selectedRow[0][0], 0);
-        } else if (event.key === "Enter") {
+
+          const cell = hot.getCell(selectedRow[0][0], 0);
+          scrollToCell(cell);
+        } //
+        else if (event.key === "Enter") {
           // insert a new row below the selected row if the selected row is the last row
           if (selectedRow[0][0] === hot.countRows() - 1) {
             hot.alter("insert_row_below", selectedRow[0][0]);
             // change the selection to the newly inserted row
             hot.selectCell(selectedRow[0][0] + 1, 0);
+            const cell = hot.getCell(selectedRow[0][0] + 1, 0);
+            scrollToCell(cell);
           }
         }
       },
@@ -74,9 +94,13 @@ const DataTable = (props: DataTableProps) => {
         if (selectedRow === void 0) throw new Error("No selected row found");
 
         hot.alter("remove_row", selectedRow[0][0]);
+        const currentSelectedCell = hot.getSelected();
+        if (currentSelectedCell === void 0)
+          throw new Error("No selected cell found");
+        scrollToCell(hot.getCell(currentSelectedCell[0][0], 0));
       },
     });
-  }, []);
+  }, [props.scrollRef]);
 
   return (
     <>

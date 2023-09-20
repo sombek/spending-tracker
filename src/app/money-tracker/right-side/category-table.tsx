@@ -1,4 +1,4 @@
-import { RefObject, useState } from "react";
+import { RefObject, useContext, useState } from "react";
 
 import DataTable from "components/data-table";
 import {
@@ -6,6 +6,7 @@ import {
   Transaction,
 } from "infrastructure/backend-service";
 import { HotTable } from "@handsontable/react";
+import { RightSideScrollContext } from "app/money-tracker/money-tracker";
 
 const CategoryTable = (props: {
   tableRef?: RefObject<HotTable>;
@@ -13,6 +14,8 @@ const CategoryTable = (props: {
   multiPayments: MultiPaymentBreakdown[];
   setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
 }) => {
+  const rightSideScrollContext = useContext(RightSideScrollContext);
+
   const [categoryPurchases] = useState<Transaction[]>(() => {
     const categoryRow = props.multiPayments.find(
       (payment) => payment.title === props.title,
@@ -38,6 +41,7 @@ const CategoryTable = (props: {
 
       <div className="mt-2" style={{ maxWidth: 250 }}>
         <DataTable
+          scrollRef={rightSideScrollContext}
           tableRef={props.tableRef}
           isMultiPayments={false}
           data={categoryPurchases}

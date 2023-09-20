@@ -21,6 +21,21 @@ const ResultsTable = (props: {
   }, [props.totalMoneyIn, props.totalMoneyOut]);
 
   const data2 = useMemo(() => {
+    function calculateDaysUntilSalaryDay(salaryDay: number) {
+      // get today's date
+      const today = new Date();
+      // get the day of the month
+      const dayOfMonth = today.getDate();
+      // if the day of the month is less than the salary day, then the salary day is in the future
+      console.log(dayOfMonth, salaryDay, "dayOfMonth, salaryDay");
+      if (dayOfMonth < salaryDay) {
+        // return the difference between the salary day and the day of the month
+        return salaryDay - dayOfMonth;
+      } else {
+        return "N/A";
+      }
+    }
+
     return [
       {
         title: "Total Money Left",
@@ -28,10 +43,11 @@ const ResultsTable = (props: {
       },
       {
         title: "Days Until Next Paycheck",
-        amount: props.daysUntilNextPaycheck,
+        amount: calculateDaysUntilSalaryDay(props.daysUntilNextPaycheck),
       },
     ];
   }, [props.totalMoneyLeft, props.daysUntilNextPaycheck]);
+
   return (
     <div>
       <span className="inline-flex items-center rounded-md bg-lime-100 px-2 py-1 text-xs font-medium text-lime-900 ring-1 ring-inset ring-lime-700/10">

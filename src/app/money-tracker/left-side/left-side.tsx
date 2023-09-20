@@ -1,5 +1,4 @@
-import styles from "./money-in-column.module.css";
-import { RefObject, useMemo } from "react";
+import { RefObject, useContext, useMemo } from "react";
 import DataTable from "components/data-table";
 import {
   MultiPaymentBreakdown,
@@ -9,8 +8,9 @@ import { HotTable } from "@handsontable/react";
 import OneTimePayments from "app/money-tracker/left-side/one-time-payments/one-time-payments";
 import MultiPayments from "app/money-tracker/left-side/multi-payments/multi-payments";
 import ResultsTable from "app/money-tracker/left-side/results-table";
+import { LeftSideScrollContext } from "app/money-tracker/money-tracker";
 
-const MoneyInColumn = (props: {
+const LeftSide = (props: {
   tableRefs: {
     moneyIn: RefObject<HotTable>;
     singlePayments: RefObject<HotTable>;
@@ -24,6 +24,8 @@ const MoneyInColumn = (props: {
   moneyIn: Transaction[];
   setMoneyIn: (data: Transaction[]) => void;
 }) => {
+  const leftSideScrollContext = useContext(LeftSideScrollContext);
+
   const totalMoneyIn = useMemo(() => {
     if (props.moneyIn === undefined) return 0;
     return props.moneyIn.reduce((sum, payment) => {
@@ -74,12 +76,13 @@ const MoneyInColumn = (props: {
     return sumOfMoneyIn - sumOfMoneyOut;
   }, [sumOfMoneyOut, sumOfMoneyIn]);
   return (
-    <div className={styles.moneyInTable}>
+    <>
       <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-900 ring-1 ring-inset ring-indigo-700/10">
         💰Money In
       </span>
       <div className="mt-2">
         <DataTable
+          scrollRef={leftSideScrollContext}
           tableRef={props.tableRef}
           isMultiPayments={false}
           data={props.moneyIn}
@@ -95,6 +98,7 @@ const MoneyInColumn = (props: {
 
       <div className="mt-2">
         <OneTimePayments
+          scrollRef={leftSideScrollContext}
           tableRef={props.tableRefs.singlePayments}
           singlePayments={props.singlePayments}
           setSinglePayments={props.setSinglePayments}
@@ -102,6 +106,7 @@ const MoneyInColumn = (props: {
       </div>
       <div className="mt-2">
         <MultiPayments
+          scrollRef={leftSideScrollContext}
           tableRef={props.tableRefs.multiPayments}
           setMultiPayments={props.setMultiPayments}
           data={props.multiPayments}
@@ -113,10 +118,10 @@ const MoneyInColumn = (props: {
           totalMoneyOut={sumOfMoneyOut}
           totalMoneyIn={totalMoneyIn}
           totalMoneyLeft={sumOfMoneyRemaining}
-          daysUntilNextPaycheck={12}
+          daysUntilNextPaycheck={25}
         />
       </div>
-    </div>
+    </>
   );
 };
-export default MoneyInColumn;
+export default LeftSide;

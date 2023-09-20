@@ -1,9 +1,0 @@
-.moneyOutColumn {
-  @apply overflow-auto;
-  background: linear-gradient(to bottom right, transparent, rgb(219 234 254)),
-    url(https://grainy-gradients.vercel.app/noise.svg);
-
-  width: calc(100% - 300px);
-  padding: 10px;
-  overflow: auto;
-}
