@@ -91,6 +91,7 @@ const RightSide = (props: {
     setCategoriesRefs(newCategoriesRefs);
     props.setMultiPayments(newMultiPayments);
     setIsInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSideScrollElement]);
 
   // observe the width of the canvas, and update the canvas width
@@ -164,6 +165,7 @@ const RightSide = (props: {
       margin={[0, 0]}
       isResizable={false}
       onLayoutChange={onLayoutChange}
+      draggableHandle={".draggable-handle"}
     >
       {props.multiPayments.map((payment) => {
         const title = payment.title;

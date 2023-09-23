@@ -7,6 +7,7 @@ import {
 } from "infrastructure/backend-service";
 import { HotTable } from "@handsontable/react";
 import { RightSideScrollContext } from "app/money-tracker/money-tracker";
+import { ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
 
 const CategoryTable = forwardRef<
   HTMLDivElement,
@@ -38,9 +39,16 @@ const CategoryTable = forwardRef<
 
   return (
     <div ref={ref} data-title={props.title}>
-      <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-        <h2>{props.title}</h2>
-      </span>
+      <div className="flex justify-between" style={{ marginBottom: 10 }}>
+        <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+          <h2>{props.title}</h2>
+        </span>
+        <div className="draggable-handle cursor-move">
+          <ArrowsPointingOutIcon
+            className={"h-4 w-4 text-gray-400 cursor-move"}
+          />
+        </div>
+      </div>
 
       <div style={{ marginTop: 10 }}>
         <DataTable

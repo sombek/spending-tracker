@@ -23,3 +23,14 @@
   /* Use native apple font smoothing on everything else */
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+.react-grid-item.react-grid-placeholder {
+  background-image: linear-gradient(
+      315deg,
+      rgba(30, 65, 121, 0.7) 0%,
+      rgba(37, 68, 114, 0.7) 50%
+    ),
+    url("/noise.svg");
+  backdrop-filter: blur(1px) saturate(100%) contrast(45%) brightness(120%);
+  border-radius: 6px;
+}
