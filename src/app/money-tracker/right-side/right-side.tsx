@@ -25,8 +25,7 @@ const RightSide = (props: {
 
   const [canvasWidth, setCanvasWidth] = useState<number | null>(null);
   const [numberOfColumns, setNumberOfColumns] = useState<number | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [isHeightInitialized, setIsHeightInitialized] = useState(false);
+
   const [categoriesRefs, setCategoriesRefs] = useState<{
     [key: string]: RefObject<HTMLDivElement>;
   }>({});
@@ -40,9 +39,6 @@ const RightSide = (props: {
     );
     setNumberOfColumns(numberOfColumns);
 
-    console.log("done initializeCanvasWidth");
-
-    // call the function related to the multi payments
     const newCategoriesRefs: {
       [key: string]: RefObject<HTMLDivElement>;
     } = {};
@@ -69,16 +65,20 @@ const RightSide = (props: {
             theMultiPayment.height = height;
             return prev;
           });
-          setIsHeightInitialized(true);
         },
       );
-
-      newMultiPayments.push({
+      const newMultiPayment = {
         ...multiPayment,
-        x: lastX,
-        y: lastY,
-        height: 20,
-      });
+      };
+
+      if (multiPayment.x === null || multiPayment.x === undefined)
+        newMultiPayment.x = lastX;
+      if (multiPayment.y === null || multiPayment.y === undefined)
+        newMultiPayment.y = lastY;
+      if (multiPayment.height === null || multiPayment.height === undefined)
+        newMultiPayment.height = 1;
+
+      newMultiPayments.push(newMultiPayment);
 
       lastX += 1;
       if (lastX >= numberOfColumns) {
@@ -87,10 +87,11 @@ const RightSide = (props: {
       }
     }
     console.log(newMultiPayments, "end props.multiPayments");
+
     // update the props
     setCategoriesRefs(newCategoriesRefs);
     props.setMultiPayments(newMultiPayments);
-    setIsInitialized(true);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSideScrollElement]);
 
@@ -106,7 +107,6 @@ const RightSide = (props: {
 
   const onLayoutChange = useCallback(
     (layout: Layout[]) => {
-      if (!isHeightInitialized) return;
       const newCategoriesRefs: {
         [key: string]: RefObject<HTMLDivElement>;
       } = {};
@@ -124,6 +124,7 @@ const RightSide = (props: {
           multiPayment.y = layoutItem.y;
           multiPayment.height = layoutItem.h;
           newMultiPayments.push(multiPayment);
+
           newCategoriesRefs[multiPayment.title] =
             createCallbackRef<HTMLDivElement>((node) => {
               if (node === null) return;
@@ -144,10 +145,10 @@ const RightSide = (props: {
         return newMultiPayments;
       });
     },
-    [isHeightInitialized, props],
+    [props],
   );
 
-  if (canvasWidth === null || numberOfColumns === null || !isInitialized) {
+  if (canvasWidth === null || numberOfColumns === null) {
     return (
       <div>
         <div className="flex justify-center items-center h-full w-full">
@@ -187,7 +188,6 @@ const RightSide = (props: {
               h: payment.height || 1,
             }}
             style={{
-              maxWidth: 250,
               paddingLeft: 10,
               paddingRight: 10,
             }}
