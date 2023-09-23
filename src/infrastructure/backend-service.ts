@@ -18,6 +18,9 @@ export interface Transaction {
 export interface MultiPaymentBreakdown {
   title: string;
   purchases: Transaction[];
+  height: number;
+  x: number;
+  y: number;
 }
 
 export const upsertBudget = async (
