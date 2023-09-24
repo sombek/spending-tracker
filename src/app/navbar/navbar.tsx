@@ -88,20 +88,7 @@ function ProfileDropdown() {
 }
 
 const Navbar = () => {
-  const { isAuthenticated } = useAuth0();
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
   const navigation = [{ name: "Home", href: "/", current: false }];
-
-  if (isAuthenticated) {
-    navigation.push({
-      name: `Money Tracker - Current Month`,
-      href: `/money-tracker/${currentYear}/${currentMonth}`,
-      current: false,
-    });
-  }
-
-  // decide if the link is active or not based on the current path from react router
   const { pathname } = useLocation();
   navigation.forEach((item) => {
     item.current = pathname === item.href;
