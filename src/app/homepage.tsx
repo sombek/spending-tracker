@@ -63,25 +63,27 @@ const Homepage = () => {
             </svg>
           </div>
         )}
-        <div className={"text-center mt-4 text-gray-500"}>{month}</div>
+        <div className={"text-center mt-4 text-gray-500"}>{month} Salary</div>
       </div>
     );
   };
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
-  const months = [7, 8].map((month) => {
-    const monthName = new Date(0, month).toLocaleString("default", {
-      month: "long",
+  const months = [8, 9]
+    .map((n) => n - 1)
+    .map((month) => {
+      const monthName = new Date(0, month).toLocaleString("default", {
+        month: "long",
+      });
+      const isCurrentMonth = month === currentMonth;
+      const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
+      return MonthBlock(
+        monthName,
+        currentYear.toString(),
+        isCurrentMonth,
+        monthLink,
+      );
     });
-    const isCurrentMonth = month === currentMonth;
-    const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
-    return MonthBlock(
-      monthName,
-      currentYear.toString(),
-      isCurrentMonth,
-      monthLink,
-    );
-  });
   const { isAuthenticated } = useAuth0();
   if (!isAuthenticated)
     return (

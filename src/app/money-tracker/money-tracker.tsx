@@ -229,7 +229,7 @@ export default function MoneyTracker() {
   const lastMonthText = useMemo(() => {
     if (month === undefined) throw new Error("Month is undefined");
     if (month === "1") return "December";
-    const monthNumber = +month - 2;
+    const monthNumber = +month - 1;
     return new Date(0, monthNumber).toLocaleString("default", {
       month: "long",
     });
@@ -237,7 +237,7 @@ export default function MoneyTracker() {
   const thisMonthText = useMemo(() => {
     if (month === undefined) throw new Error("Month is undefined");
     if (month === "12") return "January";
-    return new Date(0, +month - 1).toLocaleString("default", {
+    return new Date(0, +month).toLocaleString("default", {
       month: "long",
     });
   }, [month]);
@@ -250,11 +250,11 @@ export default function MoneyTracker() {
           <div>
             📆 Money Track from
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
-              {lastMonthText} 26{nthNumber(26)}
+              {lastMonthText} 25{nthNumber(25)}
             </span>
             To
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
-              {thisMonthText} 26{nthNumber(26)}
+              {thisMonthText} 25{nthNumber(25)}
             </span>
           </div>
         </div>
