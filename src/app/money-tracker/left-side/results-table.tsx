@@ -38,7 +38,7 @@ const ResultsTable = (props: {
         // return the difference between the salary day and the day of the month
         return salaryDay - dayOfMonth;
       } else {
-        return "N/A";
+        return "Paid";
       }
     }
 
@@ -80,11 +80,10 @@ const ResultsTable = (props: {
           <HotColumn
             data="title"
             title="Title"
-            width="100%"
             renderer={(instance, td, row, col, prop, value) => {
               // slighly darker yellow for even and green for odd
-              td.style.background = "#FDE6BB";
-              // bold the text
+              td.style.backgroundImage = `linear-gradient(315deg, rgba(216, 241, 160, 0.7) 0%, rgba(243, 193, 120, 0.5) 74%), url("/noise.svg")`;
+              td.style.backdropFilter = "blur(6px)";
               td.style.fontWeight = "bold";
               // return the modified cell
               td.innerHTML = value;
@@ -94,7 +93,6 @@ const ResultsTable = (props: {
           <HotColumn
             data="amount"
             title="Amount"
-            width="90%"
             renderer={(instance, td, row, col, prop, value) => {
               // show the amount in green if it's positive
               // show the amount in red if it's negative
@@ -137,13 +135,10 @@ const ResultsTable = (props: {
           <HotColumn
             data="title"
             title="Title"
-            width="100%"
             renderer={(instance, td, row, col, prop, value) => {
-              // use yellow for even and green for odd
-              td.style.background = "#FDE6BB";
-              // bold the text
+              td.style.backgroundImage = `linear-gradient(315deg, rgba(216, 241, 160, 0.7) 0%, rgba(243, 193, 120, 0.5) 74%), url("/noise.svg")`;
+              td.style.backdropFilter = "blur(6px)";
               td.style.fontWeight = "bold";
-              // return the modified cell
               td.innerHTML = value;
               return value;
             }}
@@ -151,7 +146,6 @@ const ResultsTable = (props: {
           <HotColumn
             data="amount"
             title="Amount"
-            width="90%"
             renderer={(instance, td, row, col, prop, value) => {
               // show the amount in green if it's positive
               // show the amount in red if it's negative
@@ -169,7 +163,8 @@ const ResultsTable = (props: {
                 td.style.fontWeight = "bold";
               } else {
                 // days or day
-                td.innerHTML = value + " day" + (value > 1 ? "s" : "");
+                if (value === "Paid") td.innerHTML = value;
+                else td.innerHTML = value + " day" + (value > 1 ? "s" : "");
               }
               return value;
             }}
