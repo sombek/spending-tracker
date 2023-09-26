@@ -7,6 +7,7 @@ export interface BudgetBreakdownJson {
   moneyIn: Transaction[];
   singlePayments: Transaction[];
   multiPayments: MultiPaymentBreakdown[];
+  lastMonthMoneyRemaining: number | null;
 }
 
 export interface Transaction {

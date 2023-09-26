@@ -166,7 +166,9 @@ const DataTable = (props: DataTableProps) => {
             const formatter = new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "SAR",
+              maximumFractionDigits: 0,
             });
+
             if (value === null || value === undefined) {
               td.innerHTML = formatter.format(0);
               // update the value in the data

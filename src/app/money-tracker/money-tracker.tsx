@@ -140,6 +140,7 @@ export default function MoneyTracker() {
       moneyIn: cleanedMoneyIn,
       singlePayments: cleanedSinglePayments,
       multiPayments: cleanedMultiPayments,
+      lastMonthMoneyRemaining: null,
     };
     getAccessTokenSilently().then((access_token) => {
       upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(
@@ -272,6 +273,7 @@ export default function MoneyTracker() {
               tableRef={tablesRefs.moneyIn}
               moneyIn={moneyIn}
               setMoneyIn={setMoneyIn}
+              lastMonthMoneyRemaining={budgetBreakdown.lastMonthMoneyRemaining}
             />
           </LeftSideScrollContext.Provider>
         </div>

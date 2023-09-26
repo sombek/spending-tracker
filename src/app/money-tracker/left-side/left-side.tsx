@@ -1,4 +1,4 @@
-import { RefObject, useContext, useMemo } from "react";
+import { RefObject, useContext, useMemo, useState } from "react";
 import DataTable from "components/data-table";
 import {
   MultiPaymentBreakdown,
@@ -23,25 +23,49 @@ const LeftSide = (props: {
   tableRef: RefObject<HotTable>;
   moneyIn: Transaction[];
   setMoneyIn: (data: Transaction[]) => void;
+  lastMonthMoneyRemaining: number | null;
 }) => {
   const leftSideScrollContext = useContext(LeftSideScrollContext);
+  const [updatedMoneyIn, setUpdatedMoneyIn] = useState<Transaction[]>(() => {
+    if (
+      props.lastMonthMoneyRemaining === 0 ||
+      props.lastMonthMoneyRemaining === null
+    )
+      return props.moneyIn;
 
+    const newMoneyIn = [...props.moneyIn];
+    // check if there is last month money remaining added to the money in, update the number
+    const alreadyAddedLastMonthMoneyRemaining = newMoneyIn.find(
+      (payment) => payment.title === "Last Month Money Remaining",
+    );
+    if (alreadyAddedLastMonthMoneyRemaining !== undefined)
+      alreadyAddedLastMonthMoneyRemaining.amount =
+        props.lastMonthMoneyRemaining;
+    // add the last month money remaining to the money in
+    else
+      newMoneyIn.push({
+        title: "Last Month Money Remaining",
+        amount: props.lastMonthMoneyRemaining,
+      });
+
+    return newMoneyIn;
+  });
   const totalMoneyIn = useMemo(() => {
-    if (props.moneyIn === undefined) return 0;
-    return props.moneyIn.reduce((sum, payment) => {
+    if (updatedMoneyIn === undefined) return 0;
+    return updatedMoneyIn.reduce((sum, payment) => {
       if (payment.amount === null || payment.amount === undefined) return sum;
 
       return sum + +payment.amount;
     }, 0);
-  }, [props.moneyIn]);
+  }, [updatedMoneyIn]);
   const sumOfMoneyIn = useMemo(() => {
-    if (props.moneyIn === undefined) return 0;
-    return props.moneyIn.reduce((sum, payment) => {
+    if (updatedMoneyIn === undefined) return 0;
+    return updatedMoneyIn.reduce((sum, payment) => {
       if (payment.amount === null || payment.amount === undefined) return sum;
 
       return sum + +payment.amount;
     }, 0);
-  }, [props.moneyIn]);
+  }, [updatedMoneyIn]);
 
   const sumOfMoneyOut = useMemo(() => {
     if (props.multiPayments === undefined) return 0;
@@ -75,6 +99,7 @@ const LeftSide = (props: {
   const sumOfMoneyRemaining = useMemo(() => {
     return sumOfMoneyIn - sumOfMoneyOut;
   }, [sumOfMoneyOut, sumOfMoneyIn]);
+
   return (
     <>
       <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-900 ring-1 ring-inset ring-indigo-700/10">
@@ -85,14 +110,18 @@ const LeftSide = (props: {
           scrollRef={leftSideScrollContext}
           tableRef={props.tableRef}
           isMultiPayments={false}
-          data={props.moneyIn}
+          data={updatedMoneyIn}
           // data is being updated by the hot table
           // just need to create a copy of the data and update the state
           onAfterChange={(changes) => {
             if (changes === null) return;
-            props.setMoneyIn([...props.moneyIn]);
+            setUpdatedMoneyIn([...updatedMoneyIn]);
+            props.setMoneyIn(updatedMoneyIn);
           }}
-          onAfterRemoveRow={() => props.setMoneyIn([...props.moneyIn])}
+          onAfterRemoveRow={() => {
+            setUpdatedMoneyIn([...updatedMoneyIn]);
+            props.setMoneyIn(updatedMoneyIn);
+          }}
         />
       </div>
 
