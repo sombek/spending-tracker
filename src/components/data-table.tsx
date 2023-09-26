@@ -150,6 +150,11 @@ const DataTable = (props: DataTableProps) => {
             value: Transaction[] | number | null | string,
           ) => {
             if (typeof value === "string") {
+              if (value.toString().match(/[\u0660-\u0669]/g))
+                value = value
+                  // @ts-ignore
+                  .replace(/[\u0660-\u0669]/g, (c) => c.charCodeAt(0) - 0x0660);
+
               // it could be currency, and we need to convert it to number
               value = value.replace(/[^0-9.-]+/g, "");
               value = +value;
