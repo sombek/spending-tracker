@@ -38,12 +38,10 @@ const RightSide = (props: {
       (rightSideScrollElement.current.clientWidth - 20) / 250,
     );
     setNumberOfColumns(numberOfColumns);
-
     const newCategoriesRefs: {
       [key: string]: RefObject<HTMLDivElement>;
     } = {};
 
-    console.log(props.multiPayments, "start props.multiPayments");
     const newMultiPayments: MultiPaymentBreakdown[] = [];
     let lastX = 0;
     let lastY = 0;
@@ -86,7 +84,6 @@ const RightSide = (props: {
         lastY += 1;
       }
     }
-    console.log(newMultiPayments, "end props.multiPayments");
 
     // update the props
     setCategoriesRefs(newCategoriesRefs);
@@ -94,6 +91,48 @@ const RightSide = (props: {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSideScrollElement]);
+  const [lastMultiPayments, setLastMultiPayments] = useState<
+    MultiPaymentBreakdown[]
+  >(JSON.parse(JSON.stringify(props.multiPayments)));
+
+  // when adding new row, re-add the ref
+  useEffect(() => {
+    // if there is difference in the number of rows, then update the canvas width
+    let shouldReinitializeCanvasWidth = false;
+    for (const multiPayment of props.multiPayments) {
+      // check with lastMultiPayments
+      const lastMultiPayment = lastMultiPayments.find(
+        (item) => item.title === multiPayment.title,
+      );
+      if (lastMultiPayment === undefined) {
+        shouldReinitializeCanvasWidth = true;
+        break;
+      }
+      if (lastMultiPayment.purchases.length !== multiPayment.purchases.length) {
+        shouldReinitializeCanvasWidth = true;
+        break;
+      }
+      // if the content length is different, then update the canvas width
+      for (const purchase of multiPayment.purchases) {
+        const lastPurchase = lastMultiPayment.purchases.find(
+          (item) => item.title === purchase.title,
+        );
+        if (lastPurchase === undefined) {
+          shouldReinitializeCanvasWidth = true;
+          break;
+        }
+        if (lastPurchase.title !== purchase.title) {
+          shouldReinitializeCanvasWidth = true;
+          break;
+        }
+      }
+    }
+    console.log(shouldReinitializeCanvasWidth, "shouldReinitializeCanvasWidth");
+    if (shouldReinitializeCanvasWidth) {
+      setLastMultiPayments(JSON.parse(JSON.stringify(props.multiPayments)));
+      initializeCanvasWidth();
+    }
+  }, [initializeCanvasWidth, lastMultiPayments, props.multiPayments]);
 
   // observe the width of the canvas, and update the canvas width
   useEffect(() => {
