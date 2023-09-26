@@ -133,15 +133,14 @@ const LeftSide = (props: {
           />
         </div>
       </div>
-
-      <div className="mt-2">
-        <OneTimePayments
-          scrollRef={leftSideScrollContext}
-          tableRef={props.tableRefs.singlePayments}
-          singlePayments={props.singlePayments}
-          setSinglePayments={props.setSinglePayments}
-        />
-      </div>
+      {/*Divider*/}
+      <hr className="my-2 border-green-800" />
+      <OneTimePayments
+        scrollRef={leftSideScrollContext}
+        tableRef={props.tableRefs.singlePayments}
+        singlePayments={props.singlePayments}
+        setSinglePayments={props.setSinglePayments}
+      />
       <div className="mt-2">
         <MultiPayments
           scrollRef={leftSideScrollContext}
@@ -159,6 +158,8 @@ const LeftSide = (props: {
           />
         </div>
       </div>
+      {/*Divider*/}
+      <hr className="my-2 border-green-800" />
       <div style={{ marginTop: 5 }}>
         <ResultsTable
           totalMoneyOut={sumOfMoneyOut}
