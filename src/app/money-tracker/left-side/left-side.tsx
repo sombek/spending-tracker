@@ -123,6 +123,15 @@ const LeftSide = (props: {
             props.setMoneyIn(updatedMoneyIn);
           }}
         />
+        <div style={{ marginTop: 2 }}>
+          <ResultsTable
+            totalMoneyOut={sumOfMoneyOut}
+            totalMoneyIn={totalMoneyIn}
+            totalMoneyLeft={sumOfMoneyRemaining}
+            daysUntilNextPaycheck={25}
+            whatToShow={["TOTAL_MONEY_IN"]}
+          />
+        </div>
       </div>
 
       <div className="mt-2">
@@ -140,14 +149,23 @@ const LeftSide = (props: {
           setMultiPayments={props.setMultiPayments}
           data={props.multiPayments}
         />
+        <div style={{ marginTop: 2 }}>
+          <ResultsTable
+            totalMoneyOut={sumOfMoneyOut}
+            totalMoneyIn={totalMoneyIn}
+            totalMoneyLeft={sumOfMoneyRemaining}
+            daysUntilNextPaycheck={25}
+            whatToShow={["TOTAL_MONEY_OUT"]}
+          />
+        </div>
       </div>
-
-      <div className="mt-2">
+      <div style={{ marginTop: 5 }}>
         <ResultsTable
           totalMoneyOut={sumOfMoneyOut}
           totalMoneyIn={totalMoneyIn}
           totalMoneyLeft={sumOfMoneyRemaining}
           daysUntilNextPaycheck={25}
+          whatToShow={["TOTAL_MONEY_LEFT", "DAYS_UNTIL_NEXT_PAYCHECK"]}
         />
       </div>
     </>

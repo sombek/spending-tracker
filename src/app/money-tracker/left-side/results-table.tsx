@@ -6,19 +6,25 @@ const ResultsTable = (props: {
   totalMoneyOut: number;
   totalMoneyLeft: number;
   daysUntilNextPaycheck: number;
+  whatToShow: string[];
 }) => {
   const data1 = useMemo(() => {
-    return [
-      {
+    const whatToShow = [];
+    // if TOTAL_MONEY_IN is in the list of what to show, then add it to the list
+    if (props.whatToShow.includes("TOTAL_MONEY_IN"))
+      whatToShow.push({
         title: "Total Money In",
         amount: props.totalMoneyIn,
-      },
-      {
+      });
+
+    // if TOTAL_MONEY_OUT is in the list of what to show, then add it to the list
+    if (props.whatToShow.includes("TOTAL_MONEY_OUT"))
+      whatToShow.push({
         title: "Total Money Out",
         amount: props.totalMoneyOut,
-      },
-    ];
-  }, [props.totalMoneyIn, props.totalMoneyOut]);
+      });
+    return whatToShow;
+  }, [props.totalMoneyIn, props.totalMoneyOut, props.whatToShow]);
 
   const data2 = useMemo(() => {
     function calculateDaysUntilSalaryDay(salaryDay: number) {
@@ -36,24 +42,27 @@ const ResultsTable = (props: {
       }
     }
 
-    return [
-      {
+    const whatToShow = [];
+    // if TOTAL_MONEY_LEFT is in the list of what to show, then add it to the list
+    if (props.whatToShow.includes("TOTAL_MONEY_LEFT"))
+      whatToShow.push({
         title: "Total Money Left",
         amount: props.totalMoneyLeft,
-      },
-      {
+      });
+
+    // if DAYS_UNTIL_NEXT_PAYCHECK is in the list of what to show, then add it to the list
+    if (props.whatToShow.includes("DAYS_UNTIL_NEXT_PAYCHECK"))
+      whatToShow.push({
         title: "Days Until Next Paycheck",
         amount: calculateDaysUntilSalaryDay(props.daysUntilNextPaycheck),
-      },
-    ];
-  }, [props.totalMoneyLeft, props.daysUntilNextPaycheck]);
+      });
+
+    return whatToShow;
+  }, [props.whatToShow, props.totalMoneyLeft, props.daysUntilNextPaycheck]);
 
   return (
     <div>
-      <span className="inline-flex items-center rounded-md bg-lime-100 px-2 py-1 text-xs font-medium text-lime-900 ring-1 ring-inset ring-lime-700/10">
-        🚉 Results
-      </span>
-      <div className="mt-2">
+      <div>
         <HotTable
           data={data1}
           colHeaders={false}
@@ -98,7 +107,9 @@ const ResultsTable = (props: {
                 td.innerHTML = new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "SAR",
+                  maximumFractionDigits: 0,
                 }).format(value);
+                td.style.fontWeight = "bold";
               } else {
                 // days or day
                 td.innerHTML = value + " day" + (value > 1 ? "s" : "");
@@ -108,7 +119,7 @@ const ResultsTable = (props: {
           />
         </HotTable>
       </div>
-      <div className="mt-2">
+      <div>
         <HotTable
           data={data2}
           colHeaders={false}
@@ -129,7 +140,7 @@ const ResultsTable = (props: {
             width="100%"
             renderer={(instance, td, row, col, prop, value) => {
               // use yellow for even and green for odd
-              td.style.background = "#FDE68A";
+              td.style.background = "#FDE6BB";
               // bold the text
               td.style.fontWeight = "bold";
               // return the modified cell
@@ -153,7 +164,9 @@ const ResultsTable = (props: {
                 td.innerHTML = new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "SAR",
+                  maximumFractionDigits: 0,
                 }).format(value);
+                td.style.fontWeight = "bold";
               } else {
                 // days or day
                 td.innerHTML = value + " day" + (value > 1 ? "s" : "");
