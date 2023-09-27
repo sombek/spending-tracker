@@ -1,7 +1,7 @@
 import DataTable from "components/data-table";
 import { CellChange } from "handsontable/common";
 import { MultiPaymentBreakdown } from "infrastructure/backend-service";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { RefObject, useState } from "react";
 import styles from "./multi-payments.module.css";
 import { HotTable } from "@handsontable/react";
@@ -47,6 +47,23 @@ const MultiPayments = (props: {
   return (
     <>
       <span className="flex justify-end">
+        <div className="flex relative justify-end mb-1">
+          <PlusIcon
+            className={
+              "h-4 w-4 text-gray-400 cursor-pointer mr-2 hover:text-gray-700 transition-colors"
+            }
+            onClick={() => {
+              props.data.push({
+                title: "",
+                purchases: [],
+                height: null,
+                x: null,
+                y: null,
+              });
+              props.setMultiPayments([...props.data]);
+            }}
+          />
+        </div>
         <div className={styles.tooltip}>
           <QuestionMarkCircleIcon
             className="h-5 w-5 text-gray-400 cursor-pointer"

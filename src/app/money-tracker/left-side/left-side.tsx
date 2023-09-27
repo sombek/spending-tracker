@@ -9,6 +9,7 @@ import OneTimePayments from "app/money-tracker/left-side/one-time-payments/one-t
 import MultiPayments from "app/money-tracker/left-side/multi-payments/multi-payments";
 import ResultsTable from "app/money-tracker/left-side/results-table";
 import { LeftSideScrollContext } from "app/money-tracker/money-tracker";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 const LeftSide = (props: {
   tableRefs: {
@@ -114,6 +115,21 @@ const LeftSide = (props: {
   return (
     <>
       <div>
+        <div className="flex relative justify-end mb-1">
+          <PlusIcon
+            className={
+              "h-4 w-4 text-gray-400 cursor-pointer mr-2 hover:text-gray-700 transition-colors"
+            }
+            onClick={() => {
+              updatedMoneyIn.push({
+                title: "",
+                amount: 0,
+              });
+              setUpdatedMoneyIn([...updatedMoneyIn]);
+              props.setMoneyIn(updatedMoneyIn);
+            }}
+          />
+        </div>
         <DataTable
           scrollRef={leftSideScrollContext}
           tableRef={props.tableRef}
@@ -231,8 +247,6 @@ const LeftSide = (props: {
           whatToShow={["TOTAL_MONEY_LEFT", "DAYS_UNTIL_NEXT_PAYCHECK"]}
         />
       </div>
-      <br />
-      <br />
     </>
   );
 };

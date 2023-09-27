@@ -2,7 +2,7 @@ import { CellChange } from "handsontable/common";
 import DataTable from "components/data-table";
 import { Transaction } from "infrastructure/backend-service";
 import styles from "app/money-tracker/left-side/multi-payments/multi-payments.module.css";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { RefObject } from "react";
 import { HotTable } from "@handsontable/react";
 
@@ -21,6 +21,20 @@ const OneTimePayments = (props: {
   return (
     <div>
       <div className="flex justify-end">
+        <div className="flex relative justify-end mb-1">
+          <PlusIcon
+            className={
+              "h-4 w-4 text-gray-400 cursor-pointer mr-2 hover:text-gray-700 transition-colors"
+            }
+            onClick={() => {
+              props.singlePayments.push({
+                title: "",
+                amount: 0,
+              });
+              props.setSinglePayments([...props.singlePayments]);
+            }}
+          />
+        </div>
         <div className={styles.tooltip}>
           <QuestionMarkCircleIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
           <span className={styles.tooltiptext} style={{ zIndex: 200 }}>

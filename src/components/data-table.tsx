@@ -177,7 +177,7 @@ const DataTable = (props: DataTableProps) => {
         autoColumnSize={true}
         nestedHeaders={nestedHeaders}
         afterGetColHeader={(col, TH) => {
-          if (col === 0 && TH.innerText === "table-title") {
+          if (col === 0 && TH.innerText.includes("table-title")) {
             if (props.tableTitle !== undefined) {
               const renderedTableTitle = renderToString(props.tableTitle);
 
@@ -191,7 +191,7 @@ const DataTable = (props: DataTableProps) => {
                 "blur(10px) saturate(100%) contrast(15%) brightness(250%)";
               TH.style.fontWeight = "500";
               TH.style.textAlign = "center";
-              TH.style.lineHeight = "normal";
+              TH.style.lineHeight = "25px";
               // TH.style.border = "none";
               TH.style.borderTopLeftRadius = "0.5rem";
               TH.style.borderTopRightRadius = "0.5rem";
