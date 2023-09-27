@@ -33,7 +33,6 @@ const ResultsTable = (props: {
       // get the day of the month
       const dayOfMonth = today.getDate();
       // if the day of the month is less than the salary day, then the salary day is in the future
-      console.log(dayOfMonth, salaryDay, "dayOfMonth, salaryDay");
       if (dayOfMonth < salaryDay) {
         // return the difference between the salary day and the day of the month
         return salaryDay - dayOfMonth;

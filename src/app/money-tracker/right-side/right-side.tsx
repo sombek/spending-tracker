@@ -25,72 +25,73 @@ const RightSide = (props: {
 
   const [canvasWidth, setCanvasWidth] = useState<number | null>(null);
   const [numberOfColumns, setNumberOfColumns] = useState<number | null>(null);
-
   const [categoriesRefs, setCategoriesRefs] = useState<{
     [key: string]: RefObject<HTMLDivElement>;
   }>({});
 
-  const initializeCanvasWidth = useCallback(() => {
-    if (!rightSideScrollElement) return;
-    if (!rightSideScrollElement.current) return;
-    setCanvasWidth(rightSideScrollElement.current.clientWidth - 20);
-    const numberOfColumns = Math.floor(
-      (rightSideScrollElement.current.clientWidth - 20) / 250,
-    );
-    setNumberOfColumns(numberOfColumns);
-    const newCategoriesRefs: {
-      [key: string]: RefObject<HTMLDivElement>;
-    } = {};
-
-    const newMultiPayments: MultiPaymentBreakdown[] = [];
-    let lastX = 0;
-    let lastY = 0;
-    for (const multiPayment of props.multiPayments) {
-      if (multiPayment.title === "") continue;
-
-      newCategoriesRefs[multiPayment.title] = createCallbackRef<HTMLDivElement>(
-        (node) => {
-          if (node === null) return;
-          const height = node.clientHeight + 10;
-          if (height === undefined) return;
-
-          props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
-            const theMultiPayment = prev.find(
-              (item) => item.title === multiPayment.title,
-            );
-
-            if (theMultiPayment === undefined) return prev;
-            theMultiPayment.height = height;
-            return prev;
-          });
-        },
+  const initializeCanvasWidth = useCallback(
+    (multiPayments?: MultiPaymentBreakdown[]) => {
+      if (multiPayments === undefined) multiPayments = props.multiPayments;
+      if (!rightSideScrollElement) return;
+      if (!rightSideScrollElement.current) return;
+      setCanvasWidth(rightSideScrollElement.current.clientWidth - 20);
+      const numberOfColumns = Math.floor(
+        (rightSideScrollElement.current.clientWidth - 20) / 250,
       );
-      const newMultiPayment = {
-        ...multiPayment,
-      };
+      setNumberOfColumns(numberOfColumns);
+      const newCategoriesRefs: {
+        [key: string]: RefObject<HTMLDivElement>;
+      } = {};
 
-      if (multiPayment.x === null || multiPayment.x === undefined)
-        newMultiPayment.x = lastX;
-      if (multiPayment.y === null || multiPayment.y === undefined)
-        newMultiPayment.y = lastY;
-      if (multiPayment.height === null || multiPayment.height === undefined)
-        newMultiPayment.height = 1;
+      const newMultiPayments: MultiPaymentBreakdown[] = [];
+      let lastX = 0;
+      let lastY = 0;
+      for (const multiPayment of multiPayments) {
+        if (multiPayment.title === "") continue;
 
-      newMultiPayments.push(newMultiPayment);
+        newCategoriesRefs[multiPayment.title] =
+          createCallbackRef<HTMLDivElement>((node) => {
+            if (node === null) return;
+            const height = node.clientHeight + 10;
+            if (height === undefined) return;
 
-      lastX += 1;
-      if (lastX >= numberOfColumns) {
-        lastX = 0;
-        lastY += 1;
+            props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
+              const theMultiPayment = prev.find(
+                (item) => item.title === multiPayment.title,
+              );
+
+              if (theMultiPayment === undefined) return prev;
+              theMultiPayment.height = height;
+              return prev;
+            });
+          });
+        const newMultiPayment = {
+          ...multiPayment,
+        };
+
+        if (multiPayment.x === null || multiPayment.x === undefined)
+          newMultiPayment.x = lastX;
+        if (multiPayment.y === null || multiPayment.y === undefined)
+          newMultiPayment.y = lastY;
+        if (multiPayment.height === null || multiPayment.height === undefined)
+          newMultiPayment.height = 1;
+
+        newMultiPayments.push(newMultiPayment);
+
+        lastX += 1;
+        if (lastX >= numberOfColumns) {
+          lastX = 0;
+          lastY += 1;
+        }
       }
-    }
 
-    // update the props
-    setCategoriesRefs(newCategoriesRefs);
-    props.setMultiPayments(newMultiPayments);
-
+      // update the props
+      setCategoriesRefs(newCategoriesRefs);
+      props.setMultiPayments(newMultiPayments);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSideScrollElement]);
+    [rightSideScrollElement],
+  );
   const [lastMultiPayments, setLastMultiPayments] = useState<
     MultiPaymentBreakdown[]
   >(JSON.parse(JSON.stringify(props.multiPayments)));
@@ -98,8 +99,10 @@ const RightSide = (props: {
   // when adding new row, re-add the ref
   useEffect(() => {
     // if there is difference in the number of rows, then update the canvas width
+    // debugger;
     let shouldReinitializeCanvasWidth = false;
     for (const multiPayment of props.multiPayments) {
+      if (multiPayment.title === "") continue;
       // check with lastMultiPayments
       const lastMultiPayment = lastMultiPayments.find(
         (item) => item.title === multiPayment.title,
@@ -127,10 +130,9 @@ const RightSide = (props: {
         }
       }
     }
-    console.log(shouldReinitializeCanvasWidth, "shouldReinitializeCanvasWidth");
     if (shouldReinitializeCanvasWidth) {
       setLastMultiPayments(JSON.parse(JSON.stringify(props.multiPayments)));
-      initializeCanvasWidth();
+      initializeCanvasWidth(props.multiPayments);
     }
   }, [initializeCanvasWidth, lastMultiPayments, props.multiPayments]);
 
@@ -146,10 +148,6 @@ const RightSide = (props: {
 
   const onLayoutChange = useCallback(
     (layout: Layout[]) => {
-      const newCategoriesRefs: {
-        [key: string]: RefObject<HTMLDivElement>;
-      } = {};
-
       // update the x, y, height
       props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
         const newMultiPayments: MultiPaymentBreakdown[] = [];
@@ -163,24 +161,7 @@ const RightSide = (props: {
           multiPayment.y = layoutItem.y;
           multiPayment.height = layoutItem.h;
           newMultiPayments.push(multiPayment);
-
-          newCategoriesRefs[multiPayment.title] =
-            createCallbackRef<HTMLDivElement>((node) => {
-              if (node === null) return;
-              const height = node.clientHeight + 10;
-              if (height === undefined) return;
-              props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
-                const theMultiPayment = prev.find(
-                  (item) => item.title === multiPayment.title,
-                );
-
-                if (theMultiPayment === undefined) return prev;
-                theMultiPayment.height = height;
-                return prev;
-              });
-            });
         }
-        setCategoriesRefs(newCategoriesRefs);
         return newMultiPayments;
       });
     },

@@ -106,29 +106,22 @@ const DataTable = (props: DataTableProps) => {
   }, [props.scrollRef]);
   const [nestedHeaders, setNestedHeaders] = useState<
     Array<Array<string | { label: string; colspan: number }>>
-  >([]);
-  useEffect(
-    () => {
-      if (props.tableTitle !== undefined) {
-        setNestedHeaders([
-          [{ label: "table-title", colspan: 2 }],
-          [
-            { label: "amount", colspan: 1 },
-            { label: "title", colspan: 1 },
-          ],
-        ]);
-      } else {
-        setNestedHeaders([
-          [
-            { label: "amount", colspan: 1 },
-            { label: "title", colspan: 1 },
-          ],
-        ]);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.isMultiPayments],
-  );
+  >([
+    [
+      { label: "amount", colspan: 1 },
+      { label: "title", colspan: 1 },
+    ],
+  ]);
+  useEffect(() => {
+    if (props.tableTitle !== undefined)
+      setNestedHeaders([
+        [{ label: "table-title", colspan: 2 }],
+        [
+          { label: "amount", colspan: 1 },
+          { label: "title", colspan: 1 },
+        ],
+      ]);
+  }, [props.tableTitle]);
 
   return (
     <>
