@@ -37,7 +37,14 @@ const ResultsTable = (props: {
         // return the difference between the salary day and the day of the month
         return salaryDay - dayOfMonth;
       } else {
-        return "Paid";
+        // if we are in the same month, then the salary day will be next month
+        // return the difference between the salary day and the day of the month
+        // plus the number of days in the month
+        return (
+          salaryDay -
+          dayOfMonth +
+          new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+        );
       }
     }
 
