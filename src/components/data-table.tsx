@@ -6,6 +6,7 @@ import {
   Transaction,
 } from "infrastructure/backend-service";
 import { renderToString } from "react-dom/server";
+import Core from "handsontable/core";
 
 interface DataTableProps {
   scrollRef?: RefObject<HTMLDivElement> | null;
@@ -18,6 +19,46 @@ interface DataTableProps {
   tableRef?: RefObject<HotTable>;
   tableBackgroundColor?: string;
 }
+
+const addXButtonToCell = (
+  td: HTMLTableCellElement,
+  instance: Core,
+  row: number,
+) => {
+  // add small x button to the right of the cell
+  // if there is x-button, then don't add it again
+  if (td.querySelector("#x-button") !== null) return td;
+  td.style.position = "relative";
+  const xButton = document.createElement("button");
+  xButton.id = "x-button";
+  xButton.innerHTML = "<span>❌</span>";
+  xButton.style.position = "absolute";
+  // make it center vertically right
+  xButton.style.top = "50%";
+  xButton.style.transform = "translateY(-50%)";
+  xButton.style.right = "0";
+
+  // xButton.style.border = "none";
+  // xButton.style.background = "red";
+  xButton.style.color = "rgba(0,0,0,0.2)";
+  xButton.style.opacity = "0.1";
+  // on hover
+  xButton.addEventListener("mouseenter", () => {
+    xButton.style.color = "rgba(0,0,0,1)";
+    xButton.style.opacity = "1";
+  });
+  xButton.addEventListener("mouseleave", () => {
+    xButton.style.color = "rgba(0,0,0,0.2)";
+    xButton.style.opacity = "0.1";
+  });
+  // transparent background on hover
+  xButton.style.cursor = "pointer";
+  xButton.style.fontSize = "5px";
+  xButton.style.fontWeight = "500";
+  xButton.style.padding = "0px 2px 0px 0px";
+  xButton.addEventListener("click", () => instance.alter("remove_row", row));
+  td.appendChild(xButton);
+};
 
 const DataTable = (props: DataTableProps) => {
   let hotTableComponentRef = useRef<HotTable>(null);
@@ -229,7 +270,7 @@ const DataTable = (props: DataTableProps) => {
               } else {
                 instance.setDataAtRowProp(row, "amount", 0);
               }
-
+              addXButtonToCell(td, instance, row);
               return td;
             }
 
@@ -237,6 +278,7 @@ const DataTable = (props: DataTableProps) => {
               // the value is a number
               value = value as number;
               td.innerHTML = formatter.format(value);
+              addXButtonToCell(td, instance, row);
               return td;
             }
 
@@ -250,6 +292,7 @@ const DataTable = (props: DataTableProps) => {
             }, 0);
 
             td.innerHTML = formatter.format(sum);
+            addXButtonToCell(td, instance, row);
             return td;
           }}
         />

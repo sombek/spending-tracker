@@ -258,6 +258,17 @@ export default function MoneyTracker() {
               {thisMonthText} 25{nthNumber(25)}
             </span>
           </div>
+          <div className="items-center hidden sm:block">
+            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
+              to add row:
+            </kbd>
+            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
+              option + ↓ / ↑
+            </kbd>
+            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
+              Enter
+            </kbd>
+          </div>
         </div>
       </div>
 
