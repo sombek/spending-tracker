@@ -60,7 +60,7 @@ function ProfileDropdown() {
                   <Bars3Icon className="ml-2 -mr-0.5 h-4 w-4" />
                 )}
               </Disclosure.Button>
-              <Disclosure.Panel className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
+              <Disclosure.Panel className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="py-1">
                   <button
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left cursor-pointer"
