@@ -148,6 +148,10 @@ const RightSide = (props: {
 
   const onLayoutChange = useCallback(
     (layout: Layout[]) => {
+      const newCategoriesRefs: {
+        [key: string]: RefObject<HTMLDivElement>;
+      } = {};
+
       // update the x, y, height
       props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
         const newMultiPayments: MultiPaymentBreakdown[] = [];
@@ -161,7 +165,24 @@ const RightSide = (props: {
           multiPayment.y = layoutItem.y;
           multiPayment.height = layoutItem.h;
           newMultiPayments.push(multiPayment);
+
+          newCategoriesRefs[multiPayment.title] =
+            createCallbackRef<HTMLDivElement>((node) => {
+              if (node === null) return;
+              const height = node.clientHeight + 10;
+              if (height === undefined) return;
+              props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
+                const theMultiPayment = prev.find(
+                  (item) => item.title === multiPayment.title,
+                );
+
+                if (theMultiPayment === undefined) return prev;
+                theMultiPayment.height = height;
+                return prev;
+              });
+            });
         }
+        setCategoriesRefs(newCategoriesRefs);
         return newMultiPayments;
       });
     },
