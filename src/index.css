@@ -34,3 +34,7 @@
   backdrop-filter: blur(1px) saturate(100%) contrast(45%) brightness(120%);
   border-radius: 6px;
 }
+
+.handsontable tr {
+  background: transparent;
+}

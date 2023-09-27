@@ -113,10 +113,7 @@ const LeftSide = (props: {
 
   return (
     <>
-      <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-900 ring-1 ring-inset ring-indigo-700/10">
-        💰Money In
-      </span>
-      <div className="mt-2">
+      <div>
         <DataTable
           scrollRef={leftSideScrollContext}
           tableRef={props.tableRef}
@@ -133,6 +130,9 @@ const LeftSide = (props: {
             setUpdatedMoneyIn([...updatedMoneyIn]);
             props.setMoneyIn(updatedMoneyIn);
           }}
+          tableTitle={
+            <span className="font-medium text-green-900"> 💰Money In</span>
+          }
         />
         <div style={{ marginTop: 2 }}>
           <ResultsTable

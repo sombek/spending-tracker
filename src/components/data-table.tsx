@@ -1,10 +1,11 @@
-import { RefObject, useEffect, useRef } from "react";
+import { ReactElement, RefObject, useEffect, useRef, useState } from "react";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { CellChange } from "handsontable/common";
 import {
   MultiPaymentBreakdown,
   Transaction,
 } from "infrastructure/backend-service";
+import { renderToString } from "react-dom/server";
 
 interface DataTableProps {
   scrollRef?: RefObject<HTMLDivElement> | null;
@@ -13,7 +14,9 @@ interface DataTableProps {
   onAfterRemoveRow: () => void;
   isMultiPayments: boolean;
   title?: string;
+  tableTitle?: ReactElement;
   tableRef?: RefObject<HotTable>;
+  tableBackgroundColor?: string;
 }
 
 const DataTable = (props: DataTableProps) => {
@@ -101,6 +104,31 @@ const DataTable = (props: DataTableProps) => {
       },
     });
   }, [props.scrollRef]);
+  const [nestedHeaders, setNestedHeaders] = useState<
+    Array<Array<string | { label: string; colspan: number }>>
+  >([]);
+  useEffect(
+    () => {
+      if (props.tableTitle !== undefined) {
+        setNestedHeaders([
+          [{ label: "table-title", colspan: 2 }],
+          [
+            { label: "amount", colspan: 1 },
+            { label: "title", colspan: 1 },
+          ],
+        ]);
+      } else {
+        setNestedHeaders([
+          [
+            { label: "amount", colspan: 1 },
+            { label: "title", colspan: 1 },
+          ],
+        ]);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [props.isMultiPayments],
+  );
 
   return (
     <>
@@ -113,6 +141,30 @@ const DataTable = (props: DataTableProps) => {
         width="100%"
         height="auto"
         autoColumnSize={true}
+        nestedHeaders={nestedHeaders}
+        afterGetColHeader={(col, TH) => {
+          if (col === 0 && TH.innerText === "table-title") {
+            if (props.tableTitle !== undefined) {
+              const renderedTableTitle = renderToString(props.tableTitle);
+
+              if (renderedTableTitle.includes("Money In"))
+                TH.style.background = `linear-gradient(to bottom left, RGBA(78, 120, 36,0.5), RGBA(173, 194, 91,0.5)), url(/noise.svg)`;
+              else {
+                TH.style.background = `linear-gradient(to bottom left, RGBA(200, 17, 37,0.5), RGBA(241, 91, 74,0.5)), url(/noise.svg)`;
+              }
+
+              TH.style.backdropFilter =
+                "blur(10px) saturate(100%) contrast(15%) brightness(250%)";
+              TH.style.fontWeight = "500";
+              TH.style.textAlign = "center";
+              TH.style.lineHeight = "normal";
+              // TH.style.border = "none";
+              TH.style.borderTopLeftRadius = "0.5rem";
+              TH.style.borderTopRightRadius = "0.5rem";
+              TH.innerHTML = renderedTableTitle;
+            }
+          }
+        }}
         contextMenu={true}
         afterRemoveRow={props.onAfterRemoveRow}
         afterChange={props.onAfterChange}

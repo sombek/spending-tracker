@@ -46,11 +46,7 @@ const MultiPayments = (props: {
   const [showPopOver, setShowPopOver] = useState(false);
   return (
     <>
-      <span className="flex justify-between">
-        <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-900 ring-1 ring-inset ring-purple-700/10">
-          💸 Category Based Expenses
-        </span>
-
+      <span className="flex justify-end">
         <div className={styles.tooltip}>
           <QuestionMarkCircleIcon
             className="h-5 w-5 text-gray-400 cursor-pointer"
@@ -78,6 +74,11 @@ const MultiPayments = (props: {
           data={props.data}
           onAfterChange={afterChange}
           onAfterRemoveRow={afterRemoveRow}
+          tableTitle={
+            <span className="font-medium text-red-900">
+              💸 Category Based Expenses
+            </span>
+          }
         />
       </div>
     </>
