@@ -149,8 +149,8 @@ const DataTable = (props: DataTableProps) => {
     Array<Array<string | { label: string; colspan: number }>>
   >([
     [
-      { label: "amount", colspan: 1 },
       { label: "title", colspan: 1 },
+      { label: "amount", colspan: 1 },
     ],
   ]);
   useEffect(() => {
@@ -158,8 +158,8 @@ const DataTable = (props: DataTableProps) => {
       setNestedHeaders([
         [{ label: "table-title", colspan: 2 }],
         [
-          { label: "amount", colspan: 1 },
           { label: "title", colspan: 1 },
+          { label: "amount", colspan: 1 },
         ],
       ]);
   }, [props.tableTitle]);
