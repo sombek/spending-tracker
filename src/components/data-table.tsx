@@ -41,7 +41,7 @@ const addXButtonToCell = (
   // xButton.style.border = "none";
   // xButton.style.background = "red";
   xButton.style.color = "rgba(0,0,0,0.2)";
-  xButton.style.opacity = "0.1";
+  xButton.style.opacity = "0.5";
   // on hover
   xButton.addEventListener("mouseenter", () => {
     xButton.style.color = "rgba(0,0,0,1)";
@@ -49,11 +49,11 @@ const addXButtonToCell = (
   });
   xButton.addEventListener("mouseleave", () => {
     xButton.style.color = "rgba(0,0,0,0.2)";
-    xButton.style.opacity = "0.1";
+    xButton.style.opacity = "0.5";
   });
   // transparent background on hover
   xButton.style.cursor = "pointer";
-  xButton.style.fontSize = "5px";
+  xButton.style.fontSize = "6px";
   xButton.style.fontWeight = "500";
   xButton.style.padding = "0px 2px 0px 0px";
   xButton.addEventListener("click", () => instance.alter("remove_row", row));
@@ -196,7 +196,29 @@ const DataTable = (props: DataTableProps) => {
               TH.style.borderTopLeftRadius = "0.5rem";
               TH.style.borderTopRightRadius = "0.5rem";
               TH.innerHTML = renderedTableTitle;
+              // add button to the right of the title
+              const button = document.createElement("button");
+              button.innerHTML = "<span>➕</span>";
+              button.style.position = "absolute";
+              button.style.top = "50%";
+              button.style.transform = "translateY(-50%)";
+              button.style.right = "1%";
+              button.style.zIndex = "100";
+              button.onclick = () => {
+                // insert a new row in the last row
+                const hot = hotTableComponentRef.current?.hotInstance;
+                if (hot === null || hot === undefined) return;
+                hot.alter("insert_row_below", hot.countRows() - 1);
+                // change the selection to the newly inserted row
+                hot.selectCell(hot.countRows() - 1, 0);
+              };
+              TH.appendChild(button);
             }
+          }
+        }}
+        beforeOnCellMouseDown={(event, coords) => {
+          if (coords.row < 0) {
+            event.stopImmediatePropagation();
           }
         }}
         contextMenu={true}
