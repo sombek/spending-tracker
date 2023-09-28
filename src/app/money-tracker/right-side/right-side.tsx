@@ -35,9 +35,10 @@ const RightSide = (props: {
       if (!rightSideScrollElement) return;
       if (!rightSideScrollElement.current) return;
       setCanvasWidth(rightSideScrollElement.current.clientWidth - 20);
-      const numberOfColumns = Math.floor(
+      let numberOfColumns = Math.floor(
         (rightSideScrollElement.current.clientWidth - 20) / 250,
       );
+      if (numberOfColumns === 0) numberOfColumns = 1;
       setNumberOfColumns(numberOfColumns);
       const newCategoriesRefs: {
         [key: string]: RefObject<HTMLDivElement>;
@@ -88,6 +89,7 @@ const RightSide = (props: {
       // update the props
       setCategoriesRefs(newCategoriesRefs);
       props.setMultiPayments(newMultiPayments);
+      console.log("inside initializeCanvasWidth");
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rightSideScrollElement],
@@ -133,6 +135,7 @@ const RightSide = (props: {
     if (shouldReinitializeCanvasWidth) {
       setLastMultiPayments(JSON.parse(JSON.stringify(props.multiPayments)));
       initializeCanvasWidth(props.multiPayments);
+      console.log("after initializeCanvasWidth");
     }
   }, [initializeCanvasWidth, lastMultiPayments, props.multiPayments]);
 
