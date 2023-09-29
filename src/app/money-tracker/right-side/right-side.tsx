@@ -8,7 +8,10 @@ import {
   useState,
 } from "react";
 import { HotTable } from "@handsontable/react";
-import { MultiPaymentBreakdown } from "infrastructure/backend-service";
+import {
+  MultiPaymentBreakdown,
+  TablePosition,
+} from "infrastructure/backend-service";
 import CategoryTable from "app/money-tracker/right-side/category-table";
 import GridLayout, { Layout } from "react-grid-layout";
 import { RightSideScrollContext } from "app/money-tracker/money-tracker";
@@ -32,6 +35,7 @@ const RightSide = (props: {
   const initializeCanvasWidth = useCallback(
     (multiPayments?: MultiPaymentBreakdown[]) => {
       if (multiPayments === undefined) multiPayments = props.multiPayments;
+
       if (!rightSideScrollElement) return;
       if (!rightSideScrollElement.current) return;
       setCanvasWidth(rightSideScrollElement.current.clientWidth - 20);
@@ -40,6 +44,7 @@ const RightSide = (props: {
       );
       if (numberOfColumns === 0) numberOfColumns = 1;
       setNumberOfColumns(numberOfColumns);
+
       const newCategoriesRefs: {
         [key: string]: RefObject<HTMLDivElement>;
       } = {};
@@ -66,19 +71,28 @@ const RightSide = (props: {
               return prev;
             });
           });
+
         const newMultiPayment = {
           ...multiPayment,
         };
-
-        if (multiPayment.x === null || multiPayment.x === undefined)
-          newMultiPayment.x = lastX;
-        if (multiPayment.y === null || multiPayment.y === undefined)
-          newMultiPayment.y = lastY;
         if (multiPayment.height === null || multiPayment.height === undefined)
           newMultiPayment.height = 1;
 
-        newMultiPayments.push(newMultiPayment);
+        if (
+          newMultiPayment.columns === undefined ||
+          newMultiPayment.columns === null
+        )
+          newMultiPayment.columns = {};
+        if (!newMultiPayment.columns.hasOwnProperty(numberOfColumns))
+          newMultiPayment.columns[numberOfColumns] = {
+            x: null,
+            y: null,
+          };
+        const currentColumnPosition = newMultiPayment.columns[numberOfColumns];
+        if (currentColumnPosition.x === null) currentColumnPosition.x = lastX;
+        if (currentColumnPosition.y === null) currentColumnPosition.y = lastY;
 
+        newMultiPayments.push(newMultiPayment);
         lastX += 1;
         if (lastX >= numberOfColumns) {
           lastX = 0;
@@ -150,11 +164,11 @@ const RightSide = (props: {
   }, [rightSideScrollElement, initializeCanvasWidth]);
 
   const onLayoutChange = useCallback(
-    (layout: Layout[]) => {
+    (layout: Layout[], numberOfColumns: number | null) => {
       const newCategoriesRefs: {
         [key: string]: RefObject<HTMLDivElement>;
       } = {};
-
+      if (numberOfColumns === null) return;
       // update the x, y, height
       props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
         const newMultiPayments: MultiPaymentBreakdown[] = [];
@@ -163,9 +177,21 @@ const RightSide = (props: {
             (item) => item.i === multiPayment.title,
           );
           if (layoutItem === undefined) continue;
+          if (
+            multiPayment.columns === undefined ||
+            multiPayment.columns === null
+          )
+            multiPayment.columns = {};
+          if (!multiPayment.columns.hasOwnProperty(numberOfColumns))
+            multiPayment.columns[numberOfColumns] = {
+              x: null,
+              y: null,
+            };
 
-          multiPayment.x = layoutItem.x;
-          multiPayment.y = layoutItem.y;
+          const currentColumnPosition = multiPayment.columns[numberOfColumns];
+          currentColumnPosition.x = layoutItem.x;
+          currentColumnPosition.y = layoutItem.y;
+
           multiPayment.height = layoutItem.h;
           newMultiPayments.push(multiPayment);
 
@@ -185,9 +211,9 @@ const RightSide = (props: {
               });
             });
         }
-        setCategoriesRefs(newCategoriesRefs);
         return newMultiPayments;
       });
+      setCategoriesRefs(newCategoriesRefs);
     },
     [props],
   );
@@ -209,10 +235,20 @@ const RightSide = (props: {
       rowHeight={1}
       margin={[0, 0]}
       isResizable={false}
-      onLayoutChange={onLayoutChange}
+      onLayoutChange={(layout) => onLayoutChange(layout, numberOfColumns)}
       draggableHandle={".draggable-handle"}
     >
       {props.multiPayments.map((payment) => {
+        if (payment.columns === undefined || payment.columns === null) {
+          console.log(payment, "payment is null");
+          return null;
+        }
+        if (!payment.columns.hasOwnProperty(numberOfColumns)) {
+          console.log(payment, "payment is null");
+          return null;
+        }
+        const position: TablePosition = payment.columns[numberOfColumns];
+
         const title = payment.title;
         if (
           title === null ||
@@ -226,8 +262,8 @@ const RightSide = (props: {
           <div
             key={title}
             data-grid={{
-              x: payment.x || 0,
-              y: payment.y || 0,
+              x: position.x || 0,
+              y: position.y || 0,
               w: 1,
               h: payment.height || 1,
             }}

@@ -25,8 +25,7 @@ const MultiPayments = (props: {
       if (category.purchases === undefined) category.purchases = [];
       if (category.title === null) category.title = "";
       if (category.height === undefined) category.height = null;
-      if (category.x === null || category.x === undefined) category.x = null;
-      if (category.y === null || category.y === undefined) category.y = null;
+      if (category.columns === undefined) category.columns = {};
 
       copyOfData.push(category);
     });

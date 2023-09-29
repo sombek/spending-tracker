@@ -15,13 +15,17 @@ export interface Transaction {
   amount: number;
 }
 
+export interface TablePosition {
+  x: number | null;
+  y: number | null;
+}
+
 // MultiPaymentBreakdown
 export interface MultiPaymentBreakdown {
   title: string;
   purchases: Transaction[];
   height: number | null;
-  x: number | null;
-  y: number | null;
+  columns: { [key: number]: TablePosition };
 }
 
 export const upsertBudget = async (
