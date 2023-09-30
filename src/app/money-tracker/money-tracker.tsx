@@ -22,6 +22,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { HotTable } from "@handsontable/react";
 import styles from "app/money-tracker/money-tracker.module.css";
 import RightSide from "app/money-tracker/right-side/right-side";
+import RightTopBar from "app/money-tracker/right-top-bar/RightTopBar";
 
 const nthNumber = (number: number) => {
   return number > 0
@@ -80,10 +81,6 @@ export default function MoneyTracker() {
 
   const budgetBreakdown = useLoaderData() as BudgetBreakdownJson;
 
-  const [moneyIn, setMoneyIn] = useState<Transaction[]>(
-    budgetBreakdown.moneyIn,
-  );
-
   const [singlePayments, setSinglePayments] = useState<Transaction[]>(
     budgetBreakdown.singlePayments,
   );
@@ -91,6 +88,74 @@ export default function MoneyTracker() {
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
     budgetBreakdown.multiPayments,
   );
+
+  const [updatedMoneyIn, setUpdatedMoneyIn] = useState<Transaction[]>(() => {
+    if (
+      budgetBreakdown.lastMonthMoneyRemaining === 0 ||
+      budgetBreakdown.lastMonthMoneyRemaining === null
+    )
+      return budgetBreakdown.moneyIn;
+
+    const newMoneyIn = [...budgetBreakdown.moneyIn];
+    // check if there is last month money remaining added to the money in, update the number
+    const alreadyAddedLastMonthMoneyRemaining = newMoneyIn.find(
+      (payment) => payment.title === "Last Month Money Remaining",
+    );
+    if (alreadyAddedLastMonthMoneyRemaining !== undefined)
+      alreadyAddedLastMonthMoneyRemaining.amount =
+        budgetBreakdown.lastMonthMoneyRemaining;
+    // add the last month money remaining to the money in
+    else
+      newMoneyIn.push({
+        title: "Last Month Money Remaining",
+        amount: budgetBreakdown.lastMonthMoneyRemaining,
+      });
+
+    return newMoneyIn;
+  });
+
+  const sumOfMoneyIn = useMemo(() => {
+    if (updatedMoneyIn === undefined) return 0;
+    return updatedMoneyIn.reduce((sum, payment) => {
+      if (payment.amount === null || payment.amount === undefined) return sum;
+
+      return sum + +payment.amount;
+    }, 0);
+  }, [updatedMoneyIn]);
+
+  const sumOfMoneyOut = useMemo(() => {
+    if (multiPayments === undefined) return 0;
+    const multiPaymentsSum = multiPayments.reduce((sum, payment) => {
+      if (payment.purchases === undefined) {
+        console.log(payment, "payment");
+        return sum;
+      }
+      if (payment.purchases.length == 0) return 0;
+
+      return (
+        sum +
+        payment.purchases.reduce((sum, purchase) => {
+          if (purchase.amount === null || purchase.amount === undefined)
+            return sum;
+
+          return sum + +purchase.amount;
+        }, 0)
+      );
+    }, 0);
+
+    const singlePaymentsSum = singlePayments.reduce((sum, payment) => {
+      if (payment.amount === null || payment.amount === undefined) return sum;
+
+      return sum + +payment.amount;
+    }, 0);
+
+    return multiPaymentsSum + singlePaymentsSum;
+  }, [multiPayments, singlePayments]);
+
+  const sumOfMoneyRemaining = useMemo(() => {
+    return sumOfMoneyIn - sumOfMoneyOut;
+  }, [sumOfMoneyOut, sumOfMoneyIn]);
+
   const [tablesRefs, setTablesRefs] = useState<{
     moneyIn: RefObject<HotTable>;
     singlePayments: RefObject<HotTable>;
@@ -119,7 +184,7 @@ export default function MoneyTracker() {
   useEffect(() => {
     if (!year || !month) throw new Error("Year or month not provided");
     // remove empty transactions
-    const cleanedMoneyIn = moneyIn.filter(
+    const cleanedMoneyIn = updatedMoneyIn.filter(
       (transaction) => Object.keys(transaction).length !== 0,
     );
     const cleanedSinglePayments = singlePayments.filter(
@@ -153,13 +218,23 @@ export default function MoneyTracker() {
     });
     // wait 3 seconds, then hide the error toast
   }, [
-    moneyIn,
+    updatedMoneyIn,
     singlePayments,
     multiPayments,
     year,
     month,
     getAccessTokenSilently,
   ]);
+
+  const [nextSalaryDay] = useState<Date>(() => {
+    // salary day is always 25 of the month
+    const salaryDay = new Date();
+    salaryDay.setDate(25);
+    // if the current day is after 25, then the next salary day is next month
+    if (salaryDay.getDate() < new Date().getDate())
+      salaryDay.setMonth(salaryDay.getMonth() + 1);
+    return salaryDay;
+  });
 
   const [open, setOpen] = useState(false);
   // when click cmd + /, toggle the shortcuts modal
@@ -282,21 +357,30 @@ export default function MoneyTracker() {
               multiPayments={multiPayments}
               setMultiPayments={setMultiPayments}
               tableRef={tablesRefs.moneyIn}
-              moneyIn={moneyIn}
-              setMoneyIn={setMoneyIn}
-              lastMonthMoneyRemaining={budgetBreakdown.lastMonthMoneyRemaining}
+              moneyIn={updatedMoneyIn}
+              setMoneyIn={setUpdatedMoneyIn}
             />
           </LeftSideScrollContext.Provider>
         </div>
 
-        <div className={styles.rightSide} ref={rightSideScrollRef}>
-          <RightSideScrollContext.Provider value={rightSideScrollRef}>
-            <RightSide
-              tableRefs={tablesRefs}
-              multiPayments={multiPayments}
-              setMultiPayments={setMultiPayments}
+        <div className={styles.rightSide}>
+          <div className={styles.rightTopBar}>
+            <RightTopBar
+              nextSalaryDate={nextSalaryDay}
+              sumOfMoneyIn={sumOfMoneyIn}
+              sumOfMoneyOut={sumOfMoneyOut}
+              sumOfMoneyRemaining={sumOfMoneyRemaining}
             />
-          </RightSideScrollContext.Provider>
+          </div>
+          <div className={styles.rightBottomBar} ref={rightSideScrollRef}>
+            <RightSideScrollContext.Provider value={rightSideScrollRef}>
+              <RightSide
+                tableRefs={tablesRefs}
+                multiPayments={multiPayments}
+                setMultiPayments={setMultiPayments}
+              />
+            </RightSideScrollContext.Provider>
+          </div>
         </div>
       </div>
 

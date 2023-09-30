@@ -11,13 +11,23 @@
 }
 
 .rightSide {
-  @apply overflow-auto;
+  width: calc(100% - 300px);
+  overflow-y: auto;
+}
+
+.rightTopBar {
+  background: linear-gradient(to top right, transparent, #fffde7),
+    url(/noise.svg);
+  height: 130px;
+  border-bottom: 1px solid #e2e8f0;
+  overflow: auto;
+}
+
+.rightBottomBar {
   background: linear-gradient(to bottom right, transparent, rgb(219 234 254)),
     url(/noise.svg);
-
-  width: calc(100% - 300px);
   padding: 10px;
-  overflow: auto;
+  min-height: calc(100vh - (48px + 50px + 130px));
 }
 
 .leftSide {

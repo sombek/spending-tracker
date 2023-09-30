@@ -1,9 +1,7 @@
 import DataTable from "components/data-table";
 import { CellChange } from "handsontable/common";
 import { MultiPaymentBreakdown } from "infrastructure/backend-service";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
-import { RefObject, useState } from "react";
-import styles from "./multi-payments.module.css";
+import { RefObject } from "react";
 import { HotTable } from "@handsontable/react";
 
 const MultiPayments = (props: {
@@ -42,27 +40,26 @@ const MultiPayments = (props: {
     props.setMultiPayments(copyOfData);
   }
 
-  const [showPopOver, setShowPopOver] = useState(false);
   return (
     <>
-      <span className="flex justify-end">
-        <div className={styles.tooltip}>
-          <QuestionMarkCircleIcon
-            className="h-5 w-5 text-gray-400 cursor-pointer"
-            onClick={() => setShowPopOver(!showPopOver)}
-          />
-          <span className={styles.tooltiptext} style={{ zIndex: 200 }}>
-            <p>
-              Here you create a list of categories that you want to track your
-              expenses against.
-            </p>
-            <hr />
-            <p>
-              For example: Groceries , Eating Out, Trip to Honolulu 🏝️, etc.
-            </p>
-          </span>
-        </div>
-      </span>
+      {/*<span className="flex justify-end">*/}
+      {/*  <div className={styles.tooltip}>*/}
+      {/*    <QuestionMarkCircleIcon*/}
+      {/*      className="h-5 w-5 text-gray-400 cursor-pointer"*/}
+      {/*      onClick={() => setShowPopOver(!showPopOver)}*/}
+      {/*    />*/}
+      {/*    <span className={styles.tooltiptext} style={{ zIndex: 200 }}>*/}
+      {/*      <p>*/}
+      {/*        Here you create a list of categories that you want to track your*/}
+      {/*        expenses against.*/}
+      {/*      </p>*/}
+      {/*      <hr />*/}
+      {/*      <p>*/}
+      {/*        For example: Groceries , Eating Out, Trip to Honolulu 🏝️, etc.*/}
+      {/*      </p>*/}
+      {/*    </span>*/}
+      {/*  </div>*/}
+      {/*</span>*/}
 
       <div className="mt-2">
         <DataTable
@@ -74,9 +71,11 @@ const MultiPayments = (props: {
           onAfterChange={afterChange}
           onAfterRemoveRow={afterRemoveRow}
           tableTitle={
-            <span className="font-medium text-red-900">
-              💸 Category Based Expenses
-            </span>
+            <div className="tooltip tooltip-open" data-tip="hello">
+              <span className="font-medium text-red-900">
+                💸 Category Based Expenses
+              </span>
+            </div>
           }
         />
       </div>
