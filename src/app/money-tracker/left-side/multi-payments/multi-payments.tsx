@@ -1,8 +1,9 @@
 import DataTable from "components/data-table";
 import { CellChange } from "handsontable/common";
 import { MultiPaymentBreakdown } from "infrastructure/backend-service";
-import { RefObject } from "react";
+import { RefObject, useState } from "react";
 import { HotTable } from "@handsontable/react";
+import Xarrow from "react-xarrows";
 
 const MultiPayments = (props: {
   scrollRef: RefObject<HTMLDivElement> | null;
@@ -40,6 +41,9 @@ const MultiPayments = (props: {
     props.setMultiPayments(copyOfData);
   }
 
+  const [currentSelectedCategory, setCurrentSelectedCategory] = useState<
+    string | null
+  >(null);
   return (
     <>
       {/*<span className="flex justify-end">*/}
@@ -70,6 +74,17 @@ const MultiPayments = (props: {
           data={props.data}
           onAfterChange={afterChange}
           onAfterRemoveRow={afterRemoveRow}
+          onSelection={(row: number) => {
+            const category = props.data[row];
+            if (category === undefined) return;
+            console.log(category.title);
+            if (!category.title) {
+              setCurrentSelectedCategory(null);
+              return;
+            }
+            setCurrentSelectedCategory(category.title);
+          }}
+          onDeselection={() => setCurrentSelectedCategory(null)}
           tableTitle={
             <div className="tooltip tooltip-open" data-tip="hello">
               <span className="font-medium text-red-900">
@@ -79,6 +94,18 @@ const MultiPayments = (props: {
           }
         />
       </div>
+      {currentSelectedCategory !== null && (
+        <Xarrow
+          arrowBodyProps={{
+            strokeWidth: 2,
+          }}
+          start={`def-${currentSelectedCategory}`}
+          startAnchor={"right"}
+          end={currentSelectedCategory}
+          endAnchor={"left"}
+          divContainerStyle={{ zIndex: 200 }}
+        />
+      )}
     </>
   );
 };

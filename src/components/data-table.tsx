@@ -18,6 +18,8 @@ interface DataTableProps {
   tableTitle?: ReactElement;
   tableRef?: RefObject<HotTable>;
   tableBackgroundColor?: string;
+  onSelection?: (row: number) => void;
+  onDeselection?: () => void;
 }
 
 const addXButtonToCell = (
@@ -176,6 +178,8 @@ const DataTable = (props: DataTableProps) => {
         height="auto"
         autoColumnSize={true}
         nestedHeaders={nestedHeaders}
+        afterSelection={(row) => props.onSelection?.(row)}
+        afterDeselect={() => props.onDeselection?.()}
         afterGetColHeader={(col, TH) => {
           if (col === 0 && TH.innerText.includes("table-title")) {
             if (props.tableTitle !== undefined) {
@@ -315,6 +319,10 @@ const DataTable = (props: DataTableProps) => {
 
             td.innerHTML = formatter.format(sum);
             addXButtonToCell(td, instance, row);
+            const title = instance.getDataAtRowProp(row, "title");
+            if (title === null || title === undefined) return td;
+            td.id = "def-" + title;
+
             return td;
           }}
         />
