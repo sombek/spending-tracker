@@ -17,7 +17,7 @@ const RightTopBar = (props: {
       setDaysUntilSalary((daysUntilSalary) => {
         if (daysUntilSalary === numberOfDaysUntilSalary) {
           clearInterval(interval);
-          return 25;
+          return daysUntilSalary;
         }
         return daysUntilSalary + 1;
       });
