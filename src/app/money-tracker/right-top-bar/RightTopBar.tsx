@@ -149,6 +149,7 @@ const RightTopBar = (props: {
                 }
               ></span>
             </span>
+            <span className="text-xs text-gray-400">Days</span>
           </div>
           <div className="stat-desc">
             {/*Day and month only*/}
