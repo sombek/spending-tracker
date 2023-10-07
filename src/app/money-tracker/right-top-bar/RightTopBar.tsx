@@ -30,7 +30,7 @@ const RightTopBar = (props: {
       style={{ paddingLeft: 20, width: "fit-content" }}
     >
       <div className="stats">
-        <div className="stat">
+        <div className="stat" data-tour="1.1-step">
           <div className="stat-figure text-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +61,7 @@ const RightTopBar = (props: {
           <div className="stat-desc">Sum of all income</div>
         </div>
 
-        <div className="stat">
+        <div className="stat" data-tour="2.1-step">
           <div className="stat-figure text-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -91,7 +91,7 @@ const RightTopBar = (props: {
           <div className="stat-desc">Sum of all expenses</div>
         </div>
 
-        <div className="stat">
+        <div className="stat" data-tour="4.1-step">
           <div className="stat-figure text-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"

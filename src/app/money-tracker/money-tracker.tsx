@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Tour, { ReactourStep } from "reactour";
 
 import {
   BudgetBreakdownJson,
@@ -23,6 +24,7 @@ import { HotTable } from "@handsontable/react";
 import styles from "app/money-tracker/money-tracker.module.css";
 import RightSide from "app/money-tracker/right-side/right-side";
 import RightTopBar from "app/money-tracker/right-top-bar/RightTopBar";
+import { MapPinIcon } from "@heroicons/react/20/solid";
 
 const nthNumber = (number: number) => {
   return number > 0
@@ -225,6 +227,9 @@ export default function MoneyTracker() {
     month,
     getAccessTokenSilently,
   ]);
+  const [showTour, setShowTour] = useState<boolean>(
+    budgetBreakdown.showTour || true,
+  );
 
   const [nextSalaryDay] = useState<Date>(() => {
     // salary day is always 25 of the month
@@ -332,7 +337,18 @@ export default function MoneyTracker() {
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
               {thisMonthText} 25{nthNumber(25)}
             </span>
+            <button
+              className={
+                "inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 "
+              }
+              onClick={() => setShowTour(true)}
+            >
+              <MapPinIcon className={"h-4 w-4 mr-1"} />
+              Show Tour
+            </button>
           </div>
+
+          <div className="flex items-start">{/*/!*  show tour button */}</div>
           <div className="items-center hidden sm:block">
             <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
               to add row:
@@ -351,6 +367,7 @@ export default function MoneyTracker() {
         <div className={styles.leftSide} ref={leftSideScrollRef}>
           <LeftSideScrollContext.Provider value={leftSideScrollRef}>
             <LeftSide
+              setShowTour={setShowTour}
               tableRefs={tablesRefs}
               singlePayments={singlePayments}
               setSinglePayments={setSinglePayments}
@@ -372,7 +389,11 @@ export default function MoneyTracker() {
               sumOfMoneyRemaining={sumOfMoneyRemaining}
             />
           </div>
-          <div className={styles.rightBottomBar} ref={rightSideScrollRef}>
+          <div
+            className={styles.rightBottomBar}
+            ref={rightSideScrollRef}
+            data-tour="forth-step"
+          >
             <RightSideScrollContext.Provider value={rightSideScrollRef}>
               <RightSide
                 tableRefs={tablesRefs}
@@ -398,6 +419,102 @@ export default function MoneyTracker() {
         <QuestionMarkCircleIcon className={"h-6 w-6"} />
       </button>
       <ShortcutsModal setOpen={setOpen} open={open} />
+      <Tour
+        steps={steps}
+        accentColor={"#5cb7b7"}
+        isOpen={showTour}
+        onRequestClose={() => setShowTour(false)}
+        badgeContent={(curr, tot) => `${curr} of ${tot}`}
+        getCurrentStep={(curr) => {
+          const currentStep = curr + 1;
+          if (currentStep === 6) {
+            // select first row in the multi payments table
+            tablesRefs.multiPayments.current?.hotInstance?.selectCell(0, 0);
+          }
+          console.log(`The current step is ${curr + 1}`);
+        }}
+      />
     </>
   );
 }
+
+const steps: ReactourStep[] = [
+  {
+    selector: '[data-tour="1-step"]',
+    content: "In this section, you can add your money in",
+  },
+  {
+    selector: '[data-tour="1.1-step"]',
+    content: "And it should reflect here",
+  },
+  {
+    selector: '[data-tour="2-step"]',
+    content: (
+      <div>
+        <div className={"flex flex-row items-center"}>
+          <div className={"flex flex-col"}>
+            <div className={"text-sm font-medium text-gray-900"}>
+              Here you can add your one time payments These are usually payments
+              that is fixed every month. Examples?
+            </div>
+            <div className={"text-xs text-gray-500"}>
+              <ul className={"list-disc list-inside"}>
+                <li className={"font-medium"}>Rent</li>
+                <li className={"font-medium"}>Car Payment</li>
+                <li className={"font-medium"}>Saving for a trip</li>
+                <li className={"font-medium"}>Saving for a marriage</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    selector: '[data-tour="2.1-step"]',
+    content: "Every time you add a payment, it should reflect here",
+  },
+  {
+    selector: '[data-tour="third-step"]',
+    content: (
+      <div>
+        <div className={"flex flex-row items-center"}>
+          <div className={"flex flex-col"}>
+            <div className={"text-sm font-medium text-gray-900"}>
+              Here you can add your multi payments Think of this as a budget for
+              the month. Examples?
+            </div>
+            {/*Reminder*/}
+            <div className={"text-sm font-medium text-yellow-900"}>
+              <span className={"font-bold"}>Reminder:</span> These are just
+              definition of the budget, you still need to add the actual
+              purchases in the table right side
+            </div>
+            <div className={"text-xs text-gray-500"}>
+              <ul className={"list-disc list-inside"}>
+                <li className={"font-medium"}>Groceries</li>
+                <li className={"font-medium"}>Gas</li>
+                <li className={"font-medium"}>Eating out</li>
+                <li className={"font-medium"}>Entertainment</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    selector: '[data-tour="forth-step"] .category-table',
+    content: "And here you can add your purchases to each category",
+    position: "top",
+  },
+  {
+    selector: '[data-tour="2.1-step"]',
+    content: "On each purchase it should also reflect here",
+  },
+  {
+    selector: '[data-tour="4.1-step"]',
+    content: "And here you can see the total money left",
+  },
+  // ...
+];

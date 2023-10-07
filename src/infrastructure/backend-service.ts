@@ -8,6 +8,7 @@ export interface BudgetBreakdownJson {
   singlePayments: Transaction[];
   multiPayments: MultiPaymentBreakdown[];
   lastMonthMoneyRemaining: number | null;
+  showTour?: boolean;
 }
 
 export interface Transaction {
