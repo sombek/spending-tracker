@@ -3,15 +3,15 @@
 /*/node_modules/react-resizable/css/styles.css*/
 @import "react-grid-layout/css/styles.css";
 @import "react-resizable/css/styles.css";
+/* override .stat-value */
+div.stat-value {
+  font-size: 2.1vw;
+}
 
 @tailwind base;
 * {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db #f3f4f6 !important;
-}
-/* Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 12px;
 }
 
 *::-webkit-scrollbar-track {
@@ -61,4 +61,16 @@
 
 .handsontable tr {
   background: transparent;
+}
+
+.handsontable .selected-row {
+  position: relative;
+  z-index: 1;
+  /* highlighter pen color */
+  box-shadow: 1px 1px 5px 5px #ffcc00;
+}
+
+/* second column */
+.handsontable .selected-row td:nth-child(2) {
+  font-weight: bold;
 }

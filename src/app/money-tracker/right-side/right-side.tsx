@@ -19,6 +19,9 @@ import { createCallbackRef } from "use-callback-ref";
 
 const RightSide = (props: {
   tableRefs: {
+    moneyIn: RefObject<HotTable>;
+    singlePayments: RefObject<HotTable>;
+    multiPayments: RefObject<HotTable>;
     [key: string]: RefObject<HotTable>;
   };
   multiPayments: MultiPaymentBreakdown[];
@@ -103,7 +106,6 @@ const RightSide = (props: {
       // update the props
       setCategoriesRefs(newCategoriesRefs);
       props.setMultiPayments(newMultiPayments);
-      console.log("inside initializeCanvasWidth");
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rightSideScrollElement],
@@ -116,7 +118,9 @@ const RightSide = (props: {
   useEffect(() => {
     // if there is difference in the number of rows, then update the canvas width
     // debugger;
+
     let shouldReinitializeCanvasWidth = false;
+    let reason = "no reason";
     for (const multiPayment of props.multiPayments) {
       if (multiPayment.title === "") continue;
       // check with lastMultiPayments
@@ -125,10 +129,12 @@ const RightSide = (props: {
       );
       if (lastMultiPayment === undefined) {
         shouldReinitializeCanvasWidth = true;
+        reason = "lastMultiPayment === undefined";
         break;
       }
       if (lastMultiPayment.purchases.length !== multiPayment.purchases.length) {
         shouldReinitializeCanvasWidth = true;
+        reason = `${lastMultiPayment.title} purchases is different`;
         break;
       }
       // if the content length is different, then update the canvas width
@@ -138,30 +144,34 @@ const RightSide = (props: {
         );
         if (lastPurchase === undefined) {
           shouldReinitializeCanvasWidth = true;
+          reason = "lastPurchase === undefined";
           break;
         }
         if (lastPurchase.title !== purchase.title) {
           shouldReinitializeCanvasWidth = true;
+          reason = "lastPurchase.title !== purchase.title";
           break;
         }
       }
     }
     if (shouldReinitializeCanvasWidth) {
+      console.log("going to update the canvas width, due to " + reason);
       setLastMultiPayments(JSON.parse(JSON.stringify(props.multiPayments)));
       initializeCanvasWidth(props.multiPayments);
-      console.log("after initializeCanvasWidth");
     }
   }, [initializeCanvasWidth, lastMultiPayments, props.multiPayments]);
+  useEffect(
+    () => initializeCanvasWidth(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
-  // observe the width of the canvas, and update the canvas width
+  // on window resize, update the canvas width
   useEffect(() => {
-    const resizeObserver = new ResizeObserver(() => initializeCanvasWidth());
-
-    if (!rightSideScrollElement) return;
-    if (!rightSideScrollElement.current) return;
-    resizeObserver.observe(rightSideScrollElement.current);
-    return () => resizeObserver.disconnect(); // clean up
-  }, [rightSideScrollElement, initializeCanvasWidth]);
+    const onResize = () => initializeCanvasWidth();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [initializeCanvasWidth]);
 
   const onLayoutChange = useCallback(
     (layout: Layout[], numberOfColumns: number | null) => {
@@ -275,6 +285,7 @@ const RightSide = (props: {
             <CategoryTable
               ref={categoriesRefs[title]}
               tableRef={props.tableRefs[title]}
+              parentTableRef={props.tableRefs.multiPayments}
               title={title}
               multiPayments={props.multiPayments}
               setMultiPayments={props.setMultiPayments}

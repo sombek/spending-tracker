@@ -27,7 +27,7 @@ const RightTopBar = (props: {
   return (
     <div
       className="flex flex-row justify-start items-center w-full h-full gap-4"
-      style={{ paddingLeft: 20, width: "fit-content" }}
+      style={{ paddingLeft: 20, paddingRight: 20, width: "fit-content" }}
     >
       <div className="stats">
         <div className="stat" data-tour="1.1-step">
@@ -121,7 +121,7 @@ const RightTopBar = (props: {
       </div>
       {/*hide on small screen*/}
 
-      <div className="stats md:hidden lg:flex">
+      <div className="stats">
         <div className="stat">
           <div className="stat-figure text-warning">
             <svg

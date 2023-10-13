@@ -1,6 +1,6 @@
 .moneyTrackerHeader {
-  @apply flex justify-between items-center p-5;
-
+  @apply flex justify-between items-center;
+  padding-left: 10px;
   background: white;
   height: 50px;
 }

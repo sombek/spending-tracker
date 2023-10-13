@@ -228,7 +228,7 @@ export default function MoneyTracker() {
     getAccessTokenSilently,
   ]);
   const [showTour, setShowTour] = useState<boolean>(
-    budgetBreakdown.showTour || true,
+    Boolean(budgetBreakdown.showTour),
   );
 
   const [nextSalaryDay] = useState<Date>(() => {
@@ -339,11 +339,12 @@ export default function MoneyTracker() {
             </span>
             <button
               className={
-                "inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 "
+                "inline-flex items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1"
               }
+              style={{ height: 24, paddingTop: 0 }}
               onClick={() => setShowTour(true)}
             >
-              <MapPinIcon className={"h-4 w-4 mr-1"} />
+              <MapPinIcon className={"h-3 w-3 mr-1 text-red-700"}></MapPinIcon>
               Show Tour
             </button>
           </div>
@@ -421,7 +422,7 @@ export default function MoneyTracker() {
       <ShortcutsModal setOpen={setOpen} open={open} />
       <Tour
         steps={steps}
-        accentColor={"#5cb7b7"}
+        accentColor={"#5cb1ff"}
         isOpen={showTour}
         onRequestClose={() => setShowTour(false)}
         badgeContent={(curr, tot) => `${curr} of ${tot}`}
@@ -431,7 +432,6 @@ export default function MoneyTracker() {
             // select first row in the multi payments table
             tablesRefs.multiPayments.current?.hotInstance?.selectCell(0, 0);
           }
-          console.log(`The current step is ${curr + 1}`);
         }}
       />
     </>

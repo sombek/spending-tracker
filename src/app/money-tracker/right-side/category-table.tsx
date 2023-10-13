@@ -12,7 +12,8 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 const CategoryTable = forwardRef<
   HTMLDivElement,
   {
-    tableRef?: RefObject<HotTable>;
+    tableRef: RefObject<HotTable>;
+    parentTableRef: RefObject<HotTable>;
     title: string;
     multiPayments: MultiPaymentBreakdown[];
     setMultiPayments: (data: MultiPaymentBreakdown[]) => void;
@@ -82,6 +83,39 @@ const CategoryTable = forwardRef<
           tableRef={props.tableRef}
           isMultiPayments={false}
           data={categoryPurchases}
+          onSelection={() => {
+            if (props.parentTableRef.current === null) return;
+
+            const hot = props.parentTableRef.current.hotInstance;
+            if (hot === null) return;
+            const selectedRowIndexByTitle = hot.getData().findIndex((row) => {
+              return row[0] === props.title;
+            });
+            if (selectedRowIndexByTitle === -1) return;
+            // change the css class of the td element
+            const selectedRow = hot.getCell(selectedRowIndexByTitle, 0);
+            if (selectedRow === null) return;
+            const parentNode = selectedRow.parentNode as HTMLTableCellElement;
+            if (parentNode === null) return;
+            parentNode.classList.add("selected-row");
+          }}
+          onDeselection={() => {
+            console.log("clear selection " + props.title);
+            if (props.parentTableRef.current === null) return;
+
+            const hot = props.parentTableRef.current.hotInstance;
+            if (hot === null) return;
+            const selectedRowIndexByTitle = hot.getData().findIndex((row) => {
+              return row[0] === props.title;
+            });
+            if (selectedRowIndexByTitle === -1) return;
+            // change the css class of the td element
+            const selectedRow = hot.getCell(selectedRowIndexByTitle, 0);
+            if (selectedRow === null) return;
+            const parentNode = selectedRow.parentNode as HTMLTableCellElement;
+            if (parentNode === null) return;
+            parentNode.classList.remove("selected-row");
+          }}
           onAfterChange={(changes) => {
             if (changes === null) return;
             updateCategoryPurchases();
