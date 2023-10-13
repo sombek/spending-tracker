@@ -3,6 +3,7 @@ import DataTable from "components/data-table";
 import { Transaction } from "infrastructure/backend-service";
 import { RefObject } from "react";
 import { HotTable } from "@handsontable/react";
+import MoveAndAddRowAndTitleElement from "app/money-tracker/MoveAndAddRowAndTitleElement";
 
 const OneTimePayments = (props: {
   scrollRef: RefObject<HTMLDivElement> | null;
@@ -17,20 +18,28 @@ const OneTimePayments = (props: {
   }
 
   return (
-    <DataTable
-      scrollRef={props.scrollRef}
-      tableRef={props.tableRef}
-      isMultiPayments={false}
-      data={props.singlePayments}
-      onAfterChange={afterChange}
-      onAfterRemoveRow={() =>
-        props.setSinglePayments([...props.singlePayments])
-      }
-      tableBackgroundColor="bg-red-100"
-      tableTitle={
-        <span className="font-medium text-red-900">💸 One Time Payments</span>
-      }
-    />
+    <>
+      <MoveAndAddRowAndTitleElement
+        title={"💸 One Time Payments"}
+        bgColor={"red"}
+        hotTableComponentRef={props.tableRef}
+        hideMoveIcon
+      />
+      <DataTable
+        scrollRef={props.scrollRef}
+        tableRef={props.tableRef}
+        isMultiPayments={false}
+        data={props.singlePayments}
+        onAfterChange={afterChange}
+        onAfterRemoveRow={() =>
+          props.setSinglePayments([...props.singlePayments])
+        }
+        tableBackgroundColor="bg-red-100"
+        tableTitle={
+          <span className="font-medium text-red-900">💸 One Time Payments</span>
+        }
+      />
+    </>
   );
 };
 

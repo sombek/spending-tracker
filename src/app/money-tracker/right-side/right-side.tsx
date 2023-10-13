@@ -61,7 +61,7 @@ const RightSide = (props: {
         newCategoriesRefs[multiPayment.title] =
           createCallbackRef<HTMLDivElement>((node) => {
             if (node === null) return;
-            const height = node.clientHeight + 10;
+            const height = node.clientHeight + 20;
             if (height === undefined) return;
 
             props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
@@ -208,7 +208,7 @@ const RightSide = (props: {
           newCategoriesRefs[multiPayment.title] =
             createCallbackRef<HTMLDivElement>((node) => {
               if (node === null) return;
-              const height = node.clientHeight + 10;
+              const height = node.clientHeight + 20;
               if (height === undefined) return;
               props.setMultiPayments((prev: MultiPaymentBreakdown[]) => {
                 const theMultiPayment = prev.find(

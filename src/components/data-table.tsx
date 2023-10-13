@@ -5,7 +5,6 @@ import {
   MultiPaymentBreakdown,
   Transaction,
 } from "infrastructure/backend-service";
-import { renderToString } from "react-dom/server";
 import Core from "handsontable/core";
 
 interface DataTableProps {
@@ -147,24 +146,27 @@ const DataTable = (props: DataTableProps) => {
       },
     });
   }, [props.scrollRef]);
-  const [nestedHeaders, setNestedHeaders] = useState<
+  const [nestedHeaders] = useState<
     Array<Array<string | { label: string; colspan: number }>>
   >([
     [
       { label: "Title", colspan: 1 },
-      { label: "Amount", colspan: 1 },
+      {
+        label: props.isMultiPayments ? "Sum" : "Amount",
+        colspan: 1,
+      },
     ],
   ]);
-  useEffect(() => {
-    if (props.tableTitle !== undefined)
-      setNestedHeaders([
-        [{ label: "table-title", colspan: 2 }],
-        [
-          { label: "Title", colspan: 1 },
-          { label: "Amount", colspan: 1 },
-        ],
-      ]);
-  }, [props.tableTitle]);
+  // useEffect(() => {
+  //   if (props.tableTitle !== undefined)
+  //     setNestedHeaders([
+  //       [{ label: "table-title", colspan: 2 }],
+  //       [
+  //         { label: "Title", colspan: 1 },
+  //         { label: "Amount", colspan: 1 },
+  //       ],
+  //     ]);
+  // }, [props.tableTitle]);
 
   return (
     <>
@@ -180,46 +182,6 @@ const DataTable = (props: DataTableProps) => {
         nestedHeaders={nestedHeaders}
         afterSelection={(row) => props.onSelection?.(row)}
         afterDeselect={() => props.onDeselection?.()}
-        afterGetColHeader={(col, TH) => {
-          if (col === 0 && TH.innerText.includes("table-title")) {
-            if (props.tableTitle !== undefined) {
-              const renderedTableTitle = renderToString(props.tableTitle);
-
-              if (renderedTableTitle.includes("Money In"))
-                TH.style.background = `linear-gradient(to bottom left, RGBA(78, 120, 36,0.5), RGBA(173, 194, 91,0.5)), url(/noise.svg)`;
-              else {
-                TH.style.background = `linear-gradient(to bottom left, RGBA(200, 17, 37,0.5), RGBA(241, 91, 74,0.5)), url(/noise.svg)`;
-              }
-
-              TH.style.backdropFilter =
-                "blur(10px) saturate(100%) contrast(15%) brightness(250%)";
-              TH.style.fontWeight = "500";
-              TH.style.textAlign = "center";
-              TH.style.lineHeight = "25px";
-              // TH.style.border = "none";
-              TH.style.borderTopLeftRadius = "0.5rem";
-              TH.style.borderTopRightRadius = "0.5rem";
-              TH.innerHTML = renderedTableTitle;
-              // add button to the right of the title
-              const button = document.createElement("button");
-              button.innerHTML = "<span>➕</span>";
-              button.style.position = "absolute";
-              button.style.top = "50%";
-              button.style.transform = "translateY(-50%)";
-              button.style.right = "1%";
-              button.style.zIndex = "100";
-              button.onclick = () => {
-                // insert a new row in the last row
-                const hot = hotTableComponentRef.current?.hotInstance;
-                if (hot === null || hot === undefined) return;
-                hot.alter("insert_row_below", hot.countRows() - 1);
-                // change the selection to the newly inserted row
-                hot.selectCell(hot.countRows() - 1, 0);
-              };
-              TH.appendChild(button);
-            }
-          }
-        }}
         beforeOnCellMouseDown={(event, coords) => {
           if (coords.row < 0) {
             event.stopImmediatePropagation();
@@ -285,6 +247,7 @@ const DataTable = (props: DataTableProps) => {
               currency: "SAR",
               maximumFractionDigits: 0,
             });
+            td.style.textAlign = "center";
 
             if (value === null || value === undefined) {
               td.innerHTML = formatter.format(0);

@@ -1,6 +1,7 @@
 // use axios to make http requests
 // import axios from "axios";
 import axios from "axios";
+
 const backendApi = import.meta.env.VITE_BACKEND_API as string;
 
 export interface BudgetBreakdownJson {
@@ -26,6 +27,7 @@ export interface MultiPaymentBreakdown {
   title: string;
   purchases: Transaction[];
   height: number | null;
+  color: string;
   columns: { [key: number]: TablePosition };
 }
 

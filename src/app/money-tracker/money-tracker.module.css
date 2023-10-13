@@ -8,33 +8,35 @@
 .content {
   @apply flex flex-row;
   height: calc(100vh - (48px + 50px));
+  overflow: auto;
 }
 
 .rightSide {
   width: calc(100% - 300px);
-  overflow-y: auto;
+  min-width: 270px;
+  overflow-x: auto;
 }
 
 .rightTopBar {
-  background: linear-gradient(to top right, transparent, #fffde7),
-    url(/noise.svg);
+  background: linear-gradient(to left, transparent, #fffde7), url(/noise.svg);
   height: 130px;
   border-bottom: 1px solid #e2e8f0;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .rightBottomBar {
   background: linear-gradient(to bottom right, transparent, rgb(219 234 254)),
     url(/noise.svg);
   padding: 10px;
-  min-height: calc(100vh - (48px + 50px + 130px));
+  height: calc(100vh - (48px + 50px + 130px));
+  overflow-y: auto;
 }
 
 .leftSide {
   @apply overflow-auto;
   width: 300px;
-  background: linear-gradient(to bottom left, transparent, #f0fdf4),
-    url(/noise.svg);
+  min-width: 300px;
+  background: linear-gradient(to top, transparent, #f1fdf4), url(/noise.svg);
 
   padding: 10px;
   border-right: 1px solid #e2e8f0;

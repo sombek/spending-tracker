@@ -4,6 +4,7 @@ import { MultiPaymentBreakdown } from "infrastructure/backend-service";
 import { RefObject, useState } from "react";
 import { HotTable } from "@handsontable/react";
 import Xarrow from "react-xarrows";
+import MoveAndAddRowAndTitleElement from "app/money-tracker/MoveAndAddRowAndTitleElement";
 
 const MultiPayments = (props: {
   scrollRef: RefObject<HTMLDivElement> | null;
@@ -66,6 +67,12 @@ const MultiPayments = (props: {
       {/*</span>*/}
 
       <div className="mt-2">
+        <MoveAndAddRowAndTitleElement
+          title={"💸 Category Based Expenses"}
+          hotTableComponentRef={props.tableRef}
+          bgColor={"red"}
+          hideMoveIcon
+        />
         <DataTable
           scrollRef={props.scrollRef}
           tableRef={props.tableRef}

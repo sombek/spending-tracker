@@ -8,6 +8,7 @@ import { HotTable } from "@handsontable/react";
 import OneTimePayments from "app/money-tracker/left-side/one-time-payments/one-time-payments";
 import MultiPayments from "app/money-tracker/left-side/multi-payments/multi-payments";
 import { LeftSideScrollContext } from "app/money-tracker/money-tracker";
+import MoveAndAddRowAndTitleElement from "app/money-tracker/MoveAndAddRowAndTitleElement";
 
 const LeftSide = (props: {
   setShowTour: (showTour: boolean) => void;
@@ -35,6 +36,12 @@ const LeftSide = (props: {
   return (
     <>
       <div data-tour="1-step">
+        <MoveAndAddRowAndTitleElement
+          title={"💰Money In"}
+          hotTableComponentRef={props.tableRef}
+          bgColor={"green"}
+          hideMoveIcon
+        />
         <DataTable
           scrollRef={leftSideScrollContext}
           tableRef={props.tableRef}
@@ -47,9 +54,6 @@ const LeftSide = (props: {
             props.setMoneyIn([...props.moneyIn]);
           }}
           onAfterRemoveRow={() => props.setMoneyIn([...props.moneyIn])}
-          tableTitle={
-            <span className="font-medium text-green-900"> 💰Money In</span>
-          }
         />
       </div>
       <div className="flex items-center">
@@ -67,7 +71,7 @@ const LeftSide = (props: {
           data={props.multiPayments}
         />
       </div>
-      <div className="mt-2" data-tour="2-step">
+      <div className="mt-4" data-tour="2-step">
         <OneTimePayments
           scrollRef={leftSideScrollContext}
           tableRef={props.tableRefs.singlePayments}

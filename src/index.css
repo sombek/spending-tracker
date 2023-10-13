@@ -67,7 +67,7 @@ div.stat-value {
   position: relative;
   z-index: 1;
   /* highlighter pen color */
-  box-shadow: 1px 1px 5px 5px #ffcc00;
+  box-shadow: 1px 1px 5px 5px RGBA(36, 120, 120, 0.5);
 }
 
 /* second column */

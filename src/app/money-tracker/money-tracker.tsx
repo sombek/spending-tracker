@@ -88,7 +88,16 @@ export default function MoneyTracker() {
   );
 
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
-    budgetBreakdown.multiPayments,
+    () => {
+      // make sure each multi payment has a color
+      return budgetBreakdown.multiPayments.map((multiPayment) => {
+        // use one of these COLORS
+        // if (multiPayment.color === undefined) {
+        multiPayment.color = "blue";
+        // }
+        return multiPayment;
+      });
+    },
   );
 
   const [updatedMoneyIn, setUpdatedMoneyIn] = useState<Transaction[]>(() => {
@@ -347,19 +356,6 @@ export default function MoneyTracker() {
               <MapPinIcon className={"h-3 w-3 mr-1 text-red-700"}></MapPinIcon>
               Show Tour
             </button>
-          </div>
-
-          <div className="flex items-start">{/*/!*  show tour button */}</div>
-          <div className="items-center hidden sm:block">
-            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
-              to add row:
-            </kbd>
-            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
-              option + ↓ / ↑
-            </kbd>
-            <kbd className="inline-flex items-center border border-gray-300 rounded-md shadow-xs text-xs text-gray-700 bg-white px-2 py-0.5 mr-2 opacity-40 hover:opacity-100 transition-opacity">
-              Enter
-            </kbd>
           </div>
         </div>
       </div>
