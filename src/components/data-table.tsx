@@ -187,7 +187,7 @@ const DataTable = (props: DataTableProps) => {
             event.stopImmediatePropagation();
           }
         }}
-        contextMenu={true}
+        // contextMenu={true}
         afterRemoveRow={props.onAfterRemoveRow}
         afterChange={props.onAfterChange}
         stretchH={"all"}

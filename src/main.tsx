@@ -3,7 +3,7 @@ import "./index.css";
 
 import { createRoot } from "react-dom/client";
 import { registerAllModules } from "handsontable/registry";
-import { ContextMenu, registerPlugin } from "handsontable/plugins";
+// import { ContextMenu, registerPlugin } from "handsontable/plugins";
 import { Analytics } from "@vercel/analytics/react";
 
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
@@ -19,7 +19,7 @@ import { auth0AuthProvider } from "./auth";
 import Homepage from "app/homepage";
 import { ReactNode } from "react";
 
-registerPlugin(ContextMenu);
+// registerPlugin(ContextMenu);
 registerAllModules();
 
 const container = document.getElementById("root");
