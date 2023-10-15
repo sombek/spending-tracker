@@ -2,7 +2,12 @@ import {
   CalendarDaysIcon,
   IdentificationIcon,
 } from "@heroicons/react/20/solid";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import {
+  NavigateFunction,
+  Navigation,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import { Suspense, useState } from "react";
 import LoadingSpinner from "components/loading";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -11,10 +16,17 @@ import FileSystemStorage from "app/money-tracker/storage-types/file-system-stora
 
 export const MonthBlock = (
   month: string,
-  currentMonth: boolean,
+  navigation: Navigation,
   link: string,
   navigate: NavigateFunction,
 ) => {
+  const location = navigation.location;
+  let loading = false;
+  if (location) {
+    const navigationState = navigation.state;
+    loading = location.pathname === link && navigationState === "loading";
+  }
+
   return (
     // on hover, change the border color
     <div
@@ -24,44 +36,29 @@ export const MonthBlock = (
           "transition duration-500 ease-in-out transform " +
           "hover:-translate-y-1 hover:scale-100 hover:shadow-lg hover:bg-gray-100",
       ].join(" ")}
-      onClick={() => navigate(link)}
+      onClick={(e) => {
+        e.preventDefault();
+        navigate(link, {
+          state: {
+            dataStorageType: "cloud",
+          },
+        });
+      }}
     >
-      {currentMonth && (
-        <div
-          className={[
-            "rounded-full w-16 h-16 flex items-center justify-center " +
-              "bg-gray-200 text-gray-500",
-          ].join(" ")}
-        >
-          <CalendarDaysIcon />
-        </div>
-      )}
-      {!currentMonth && (
-        <div
-          className={[
-            "rounded-full w-16 h-16 flex items-center justify-center " +
-              "bg-gray-200 text-gray-500",
-          ].join(" ")}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-gray-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              // eslint-disable-next-line max-len
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      )}
+      <div
+        className={[
+          "rounded-full w-16 h-16 flex items-center justify-center " +
+            "bg-gray-200 text-gray-500",
+        ].join(" ")}
+      >
+        {loading && <span className="loading loading-spinner text-warning" />}
+        {!loading && <CalendarDaysIcon className={"w-12 h-12"} />}
+      </div>
       <div className={"text-center mt-4 text-gray-500"}>{month} Salary</div>
     </div>
   );
 };
+
 const Homepage = () => {
   // create blocks for each month
   // from January to current month
@@ -69,8 +66,7 @@ const Homepage = () => {
   // tailwind css grid
   // heroicons for the icons
   const navigate = useNavigate();
-
-  const currentMonth = new Date().getMonth();
+  const navigation = useNavigation();
   const currentYear = new Date().getFullYear();
   const months = [8, 9]
     .map((n) => n - 1)
@@ -78,12 +74,17 @@ const Homepage = () => {
       const monthName = new Date(0, month).toLocaleString("default", {
         month: "long",
       });
-      const isCurrentMonth = month === currentMonth;
-      const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
-      return MonthBlock(monthName, isCurrentMonth, monthLink, navigate);
+      const monthLink = `/money-tracker/${currentYear}/${month + 1}/cloud`;
+      return MonthBlock(monthName, navigation, monthLink, navigate);
     });
 
-  const [selectedStorageType, setSelectedStorageType] = useState("cloud");
+  const [selectedStorageType, setSelectedStorageType] = useState(() => {
+    const selectedStorageType = window.localStorage.getItem(
+      "selectedStorageType",
+    );
+    if (selectedStorageType) return selectedStorageType;
+    return "cloud";
+  });
   const { isAuthenticated } = useAuth0();
   if (!isAuthenticated)
     return (
@@ -115,20 +116,13 @@ const Homepage = () => {
     );
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      {/*Cloud or File based storage*/}
       <div className={"mx-auto mt-8 w-3/4"}>
-        {/* Ask the user to select the storage type*/}
-        {/* If the user selects cloud storage show list of months and years*/}
-        {/* If the user selects file storage show list of files*/}
-        {/* If the user selects file storage and there are no files, show a message*/}
-        {/* If the user selects file storage and there are files, show list of files*/}
         <div className={"text-2xl font-semibold"}>
-          {/*Make things next to each other*/}
           <div className={"text-gray-600 flex flex-col"}>
             Please select the storage type
           </div>
         </div>
-        {/*  make them next to each other with a space between them*/}
+
         <div className={"flex flex-row content-start space-x-4"}>
           <label className="label cursor-pointer">
             <input
@@ -136,7 +130,12 @@ const Homepage = () => {
               name="radio-10"
               className="radio checked:bg-blue-500 mr-2"
               checked={selectedStorageType === "cloud"}
-              onChange={() => setSelectedStorageType("cloud")}
+              onChange={() => {
+                setSelectedStorageType("cloud");
+                // store the selected storage type in local storage
+                // so that the next time the user comes back
+                window.localStorage.setItem("selectedStorageType", "cloud");
+              }}
             />
             <CloudIcon className={"w-6 h-6"} />
             <span className="label-text">Cloud Storage</span>
@@ -145,15 +144,21 @@ const Homepage = () => {
             <input
               type="radio"
               name="radio-10"
-              className="radio checked:bg-red-500 mr-2"
+              className="radio checked:bg-blue-500 mr-2"
               checked={selectedStorageType === "file"}
-              onChange={() => setSelectedStorageType("file")}
+              onChange={() => {
+                setSelectedStorageType("file");
+                // store the selected storage type in local storage
+                // so that the next time the user comes back
+                window.localStorage.setItem("selectedStorageType", "file");
+              }}
             />
             <DocumentIcon className={"w-6 h-6"} />
             <span className="label-text">File Storage</span>
           </label>
         </div>
       </div>
+
       <div className={"mx-auto mt-8 w-3/4"}>
         {selectedStorageType === "cloud" && (
           <CloudMonths currentYear={currentYear} months={months} />

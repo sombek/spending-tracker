@@ -1,14 +1,49 @@
-import { useState } from "react";
+import { useContext, useEffect } from "react";
 import { MonthBlock } from "app/homepage";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useNavigation } from "react-router-dom";
 import { FolderOpenIcon } from "@heroicons/react/24/solid";
+import { FileSystemStorageContext } from "app/app";
+import { get, set } from "idb-keyval";
+
+export async function selectDirectory(
+  setDirectoryHandle: (directoryHandle: FileSystemDirectoryHandle) => void,
+) {
+  const currentYear = new Date().getFullYear();
+  const months = [8, 9];
+
+  const dirOptions: DirectoryPickerOptions = {
+    mode: "readwrite",
+    startIn: "documents",
+  };
+  try {
+    const fileHandleOrUndefined = await get("directory");
+    if (fileHandleOrUndefined) {
+      console.log(
+        `Retrieved file handle "${fileHandleOrUndefined.name}" from IndexedDB.`,
+      );
+      setDirectoryHandle(fileHandleOrUndefined);
+    }
+    // This always returns an array, but we just need the first entry.
+    const dirHandle = await window.showDirectoryPicker(dirOptions);
+    for (const month of months)
+      await dirHandle.getFileHandle(`${currentYear}-${month}.json`, {
+        create: true,
+      });
+
+    setDirectoryHandle(dirHandle);
+    await set("directory", dirHandle);
+    console.log(`Saved file handle "${dirHandle.name}" to IndexedDB.`);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 function FileSystemStorage() {
-  const [directoryHandle, setDirectoryHandle] =
-    useState<FileSystemDirectoryHandle | null>(null); // DirectoryHandle
-  const navigate = useNavigate();
+  const fsStorageContext = useContext(FileSystemStorageContext);
 
-  const currentMonth = new Date().getMonth();
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+
   const currentYear = new Date().getFullYear();
   const months = [8, 9]
     .map((n) => n - 1)
@@ -16,43 +51,53 @@ function FileSystemStorage() {
       const monthName = new Date(0, month).toLocaleString("default", {
         month: "long",
       });
-      const isCurrentMonth = month === currentMonth;
-      const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
-      return MonthBlock(monthName, isCurrentMonth, monthLink, navigate);
+      const monthLink = `/money-tracker/${currentYear}/${month + 1}/local`;
+      return MonthBlock(monthName, navigation, monthLink, navigate);
     });
-
-  async function selectDirectory() {
-    const dirOptions: DirectoryPickerOptions = {
-      mode: "readwrite",
-      startIn: "documents",
-    };
-    const dirHandle = await window.showDirectoryPicker(dirOptions);
-    // make sure every month has a file
-    // if not create it
-    // if it does, read it
-    for (const month of months) {
-      await dirHandle.getFileHandle(`${month.key}.json`, {
-        create: true,
-      });
+  useEffect(() => {
+    async function getDirectory() {
+      const fileHandleOrUndefined = await get("directory");
+      if (fileHandleOrUndefined) {
+        console.log(
+          `Retrieved file handle "${fileHandleOrUndefined.name}" from IndexedDB.`,
+        );
+        fsStorageContext.setDirectoryHandle(fileHandleOrUndefined);
+      }
     }
-    setDirectoryHandle(dirHandle);
-  }
 
+    getDirectory().then(() => {
+      console.log("got directory");
+    });
+  }, []);
   return (
     <>
-      <button className="btn btn-neutral" onClick={selectDirectory}>
-        <FolderOpenIcon className="h-5 w-5 mr-2" />
-        Select Directory Please
-      </button>
+      {fsStorageContext.directoryHandle.current === null && (
+        <button
+          className="btn btn-neutral"
+          onClick={() => selectDirectory(fsStorageContext.setDirectoryHandle)}
+        >
+          <FolderOpenIcon className="h-5 w-5 mr-2" />
+          Select Directory Please
+        </button>
+      )}
+      {fsStorageContext.directoryHandle.current !== null && (
+        <button
+          className="btn btn-neutral"
+          onClick={() => selectDirectory(fsStorageContext.setDirectoryHandle)}
+        >
+          <FolderOpenIcon className="h-5 w-5 mr-2" />
+          Change Directory
+        </button>
+      )}
       {/*print directory path and details*/}
 
-      {directoryHandle && (
+      {fsStorageContext.directoryHandle.current && (
         <div>
           <div className="text-left mt-4 text-gray-900">
             <p>
               Directory Name:
               <span className={"kbd kbd-sm cursor-default"}>
-                {directoryHandle.name}
+                {fsStorageContext.directoryHandle.current.name}
               </span>
             </p>
             <p>
@@ -69,7 +114,9 @@ function FileSystemStorage() {
                   className="btn"
                   onClick={async () => {
                     //   write dummy data to the file for the current month
-                    const fileHandle = await directoryHandle.getFileHandle(
+                    const current = fsStorageContext.directoryHandle.current;
+                    if (!current) return;
+                    const fileHandle = await current.getFileHandle(
                       `${month.key}.json`,
                       {
                         create: true,

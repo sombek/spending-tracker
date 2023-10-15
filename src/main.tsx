@@ -44,10 +44,11 @@ const router = createBrowserRouter([
         element: <Homepage />,
       },
       {
-        path: "/money-tracker/:year/:month",
+        path: "/money-tracker/:year/:month/:storageType",
         element: <MoneyTracker />,
 
         loader: async ({ params }) => {
+          console.log("params", params);
           const isAuthenticated = await auth0AuthProvider.isAuthenticated();
           if (!isAuthenticated) return console.log("User is not authenticated");
 

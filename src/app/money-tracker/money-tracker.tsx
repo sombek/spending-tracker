@@ -3,6 +3,7 @@ import {
   createContext,
   createRef,
   RefObject,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -25,6 +26,7 @@ import styles from "app/money-tracker/money-tracker.module.css";
 import RightSide from "app/money-tracker/right-side/right-side";
 import RightTopBar from "app/money-tracker/right-top-bar/RightTopBar";
 import { MapPinIcon } from "@heroicons/react/20/solid";
+import { FileSystemStorageContext } from "app/app";
 
 const nthNumber = (number: number) => {
   return number > 0
@@ -78,10 +80,51 @@ export { RightSideScrollContext, LeftSideScrollContext };
 export default function MoneyTracker() {
   const rightSideScrollRef = useRef<HTMLDivElement>(null);
   const leftSideScrollRef = useRef<HTMLDivElement>(null);
+  const fsStorageContext = useContext(FileSystemStorageContext);
+  // print params
+  const pathParams = useParams();
+  const loaderData = useLoaderData();
+  let budgetBreakdown: BudgetBreakdownJson = {
+    moneyIn: [],
+    singlePayments: [],
+    multiPayments: [],
+    lastMonthMoneyRemaining: 0,
+    showTour: false,
+  };
 
   const { getAccessTokenSilently } = useAuth0();
+  if (
+    pathParams.storageType === "local" &&
+    fsStorageContext.directoryHandle.current === null
+  ) {
+    // open the modal to select the directory
+    // selectDirectory(fsStorageContext.setDirectoryHandle).then((r) =>
+    //   console.log(r),
+    // );
+  }
+  if (pathParams.storageType === "cloud")
+    // get the data from the server
+    budgetBreakdown = loaderData as BudgetBreakdownJson;
+  if (pathParams.storageType === "local") {
+    async function getFile() {
+      const current = fsStorageContext.directoryHandle.current;
+      if (!current) return;
+      const fileHandle = await current.getFileHandle(
+        `${pathParams.year}-${pathParams.month}.json`,
+        {
+          create: true,
+        },
+      );
+      // print contents of the file
+      const file = await fileHandle.getFile();
+      const contents = await file.text();
+      budgetBreakdown = JSON.parse(contents);
+    }
 
-  const budgetBreakdown = useLoaderData() as BudgetBreakdownJson;
+    getFile().then(() => {
+      console.log("got file", budgetBreakdown);
+    });
+  }
 
   const [singlePayments, setSinglePayments] = useState<Transaction[]>(
     budgetBreakdown.singlePayments,
@@ -218,15 +261,32 @@ export default function MoneyTracker() {
       multiPayments: cleanedMultiPayments,
       lastMonthMoneyRemaining: null,
     };
-    getAccessTokenSilently().then((access_token) => {
-      upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(
-        (error) => {
-          setShowErrorToast(true);
-          setTimeout(() => setShowErrorToast(false), 3000);
-          console.error(error);
-        },
-      );
-    });
+
+    if (fsStorageContext.directoryHandle.current !== null)
+      fsStorageContext.directoryHandle.current
+        .getFileHandle(`${year}-${month}.json`, {
+          create: true,
+        })
+        .then((fileHandle) => {
+          console.log("fileHandle", fileHandle);
+          const x = fileHandle.createWritable();
+          return x;
+        })
+        .then((writable) => {
+          console.log("writing", writable);
+          writable.write(JSON.stringify(updatedMultiPayments, null, 2));
+          return writable.close();
+        });
+    else
+      getAccessTokenSilently().then((access_token) => {
+        upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(
+          (error) => {
+            setShowErrorToast(true);
+            setTimeout(() => setShowErrorToast(false), 3000);
+            console.error(error);
+          },
+        );
+      });
     // wait 3 seconds, then hide the error toast
   }, [
     updatedMoneyIn,
