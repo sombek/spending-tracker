@@ -199,7 +199,11 @@ const DataTable = (props: DataTableProps) => {
           data={"title"}
           renderer={(instance, td, row, col, prop, value) => {
             // make the text bold
-            if (value === null || value === undefined) return td;
+            if (value === null || value === undefined) {
+              td.innerHTML = "";
+              return td;
+            }
+
             td.style.fontWeight = "500";
             // clean the text from \n and \r
             value = value.replace(/[\n\r]+/g, "");
