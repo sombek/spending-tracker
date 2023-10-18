@@ -348,7 +348,7 @@ export default function MoneyTracker() {
             </span>
             <button
               className={
-                "inline-flex items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1"
+                "items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1 hidden sm:inline-flex"
               }
               style={{ height: 24, paddingTop: 0 }}
               onClick={() => setShowTour(true)}
