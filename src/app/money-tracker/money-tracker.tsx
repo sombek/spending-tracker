@@ -25,14 +25,8 @@ import styles from "app/money-tracker/money-tracker.module.css";
 import RightSide from "app/money-tracker/right-side/right-side";
 import RightTopBar from "app/money-tracker/right-top-bar/RightTopBar";
 import { MapPinIcon } from "@heroicons/react/20/solid";
-
-const nthNumber = (number: number) => {
-  return number > 0
-    ? ["th", "st", "nd", "rd"][
-        (number > 3 && number < 21) || number % 10 > 3 ? 0 : number % 10
-      ]
-    : "";
-};
+import Datepicker from "react-tailwindcss-datepicker";
+import moment from "moment";
 
 function ErrorToast(props: { show: boolean }) {
   if (!props.show) return null;
@@ -78,7 +72,8 @@ export { RightSideScrollContext, LeftSideScrollContext };
 export default function MoneyTracker() {
   const rightSideScrollRef = useRef<HTMLDivElement>(null);
   const leftSideScrollRef = useRef<HTMLDivElement>(null);
-
+  // year, and month are going to be in the route
+  const { year, month } = useParams();
   const { getAccessTokenSilently } = useAuth0();
 
   const budgetBreakdown = useLoaderData() as BudgetBreakdownJson;
@@ -86,6 +81,33 @@ export default function MoneyTracker() {
   const [singlePayments, setSinglePayments] = useState<Transaction[]>(
     budgetBreakdown.singlePayments,
   );
+  const [fromSalary, setFromSalary] = useState<Date>(() => {
+    if (!budgetBreakdown.fromSalary) {
+      // if from salary is not provided, use the current month from param
+      const dateWithMonthFromParam = moment(`${year}-${month}-25`);
+      if (dateWithMonthFromParam.isValid())
+        return dateWithMonthFromParam.toDate();
+      return new Date();
+    }
+    // int time stamp to date
+    console.log("budgetBreakdown.fromSalary:", budgetBreakdown.fromSalary);
+    return new Date(budgetBreakdown.fromSalary);
+  });
+
+  const [toSalary, setToSalary] = useState<Date>(() => {
+    console.log("month", month);
+    if (!budgetBreakdown.toSalary) {
+      // if to salary is not provided, use the current month + 1
+      // 25th of the month
+
+      const dateWithMonthFromParam = moment(`${year}-${month}-25`);
+      if (dateWithMonthFromParam.isValid()) {
+        dateWithMonthFromParam.add(1, "months");
+        return dateWithMonthFromParam.toDate();
+      }
+    }
+    return new Date(budgetBreakdown.toSalary);
+  });
 
   const [multiPayments, setMultiPayments] = useState<MultiPaymentBreakdown[]>(
     () => {
@@ -188,8 +210,6 @@ export default function MoneyTracker() {
     }
   }, [multiPayments]);
 
-  // year, and month are going to be in the route
-  const { year, month } = useParams();
   // on each update on the data, we need to update the state in backend
   // so that we can save the data
   useEffect(() => {
@@ -213,6 +233,9 @@ export default function MoneyTracker() {
       return;
 
     const updatedMultiPayments: BudgetBreakdownJson = {
+      // to number time stamp
+      fromSalary: Date.parse(fromSalary.toISOString()),
+      toSalary: Date.parse(toSalary.toISOString()),
       moneyIn: cleanedMoneyIn,
       singlePayments: cleanedSinglePayments,
       multiPayments: cleanedMultiPayments,
@@ -228,27 +251,11 @@ export default function MoneyTracker() {
       );
     });
     // wait 3 seconds, then hide the error toast
-  }, [
-    updatedMoneyIn,
-    singlePayments,
-    multiPayments,
-    year,
-    month,
-    getAccessTokenSilently,
-  ]);
+  }, [updatedMoneyIn, singlePayments, multiPayments, fromSalary, toSalary]);
+
   const [showTour, setShowTour] = useState<boolean>(
     Boolean(budgetBreakdown.showTour),
   );
-
-  const [nextSalaryDay] = useState<Date>(() => {
-    // salary day is always 25 of the month
-    const salaryDay = new Date();
-    salaryDay.setDate(25);
-    // if the current day is after 25, then the next salary day is next month
-    if (salaryDay.getDate() < new Date().getDate())
-      salaryDay.setMonth(salaryDay.getMonth() + 1);
-    return salaryDay;
-  });
 
   const [open, setOpen] = useState(false);
   // when click cmd + /, toggle the shortcuts modal
@@ -316,47 +323,60 @@ export default function MoneyTracker() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [tablesRefs]);
-  const lastMonthText = useMemo(() => {
-    if (month === undefined) throw new Error("Month is undefined");
-    if (month === "1") return "December";
-    const monthNumber = +month - 1;
-    return new Date(0, monthNumber).toLocaleString("default", {
-      month: "long",
-    });
-  }, [month]);
-  const thisMonthText = useMemo(() => {
-    if (month === undefined) throw new Error("Month is undefined");
-    if (month === "12") return "January";
-    return new Date(0, +month).toLocaleString("default", {
-      month: "long",
-    });
-  }, [month]);
 
   const [showErrorToast, setShowErrorToast] = useState(false);
   return (
     <>
       <div>
         <div className={styles.moneyTrackerHeader}>
-          <div>
-            📆 Money Track from
-            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
-              {lastMonthText} 25{nthNumber(25)}
-            </span>
-            To
-            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mr-1 ml-1">
-              {thisMonthText} 25{nthNumber(25)}
-            </span>
-            <button
-              className={
-                "items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1 hidden sm:inline-flex"
-              }
-              style={{ height: 24, paddingTop: 0 }}
-              onClick={() => setShowTour(true)}
-            >
-              <MapPinIcon className={"h-3 w-3 mr-1 text-red-700"}></MapPinIcon>
-              Show Tour
-            </button>
+          <span>📆 Money Track from</span>
+
+          <div style={{ width: 130, zIndex: 200 }}>
+            <Datepicker
+              value={{
+                startDate: fromSalary,
+                endDate: fromSalary,
+              }}
+              asSingle={true}
+              maxDate={toSalary}
+              showFooter={true}
+              useRange={false}
+              displayFormat={"MMM D"}
+              onChange={(value) => {
+                if (value === null) return;
+                console.log(new Date(value.startDate as string));
+                setFromSalary(new Date(value.startDate as string));
+              }}
+            />
           </div>
+          <span>To</span>
+          <div style={{ width: 130, zIndex: 200 }}>
+            <Datepicker
+              value={{
+                startDate: toSalary,
+                endDate: toSalary,
+              }}
+              displayFormat={"MMM D"}
+              minDate={fromSalary}
+              asSingle={true}
+              useRange={false}
+              onChange={(value) => {
+                if (value === null) return;
+                setToSalary(new Date(value.startDate as string));
+              }}
+            />
+          </div>
+
+          <button
+            className={
+              "items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1 hidden sm:inline-flex"
+            }
+            style={{ height: 24, paddingTop: 0 }}
+            onClick={() => setShowTour(true)}
+          >
+            <MapPinIcon className={"h-3 w-3 mr-1 text-red-700"}></MapPinIcon>
+            Show Tour
+          </button>
         </div>
       </div>
 
@@ -380,7 +400,7 @@ export default function MoneyTracker() {
         <div className={styles.rightSide}>
           <div className={styles.rightTopBar}>
             <RightTopBar
-              nextSalaryDate={nextSalaryDay}
+              nextSalaryDate={toSalary}
               sumOfMoneyIn={sumOfMoneyIn}
               sumOfMoneyOut={sumOfMoneyOut}
               sumOfMoneyRemaining={sumOfMoneyRemaining}

@@ -6,13 +6,34 @@ const RightTopBar = (props: {
   sumOfMoneyOut: number;
   sumOfMoneyRemaining: number;
 }) => {
-  const [daysUntilSalary, setDaysUntilSalary] = useState<number>(1);
+  const [daysUntilSalary, setDaysUntilSalary] = useState<number>(() => {
+    if (props.nextSalaryDate < new Date()) return 0;
 
-  useEffect(() => {
     const numberOfDaysUntilSalary = Math.ceil(
       (props.nextSalaryDate.getTime() - new Date().getTime()) /
         (1000 * 60 * 60 * 24),
     );
+    console.log("numberOfDaysUntilSalary", numberOfDaysUntilSalary);
+    if (numberOfDaysUntilSalary === -0) return 0;
+
+    return numberOfDaysUntilSalary;
+  });
+
+  useEffect(() => {
+    if (props.nextSalaryDate < new Date()) {
+      setDaysUntilSalary(0);
+      return;
+    }
+
+    const numberOfDaysUntilSalary = Math.ceil(
+      (props.nextSalaryDate.getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24),
+    );
+
+    if (numberOfDaysUntilSalary === -0) {
+      setDaysUntilSalary(0);
+      return;
+    }
     const interval = setInterval(() => {
       setDaysUntilSalary((daysUntilSalary) => {
         if (daysUntilSalary === numberOfDaysUntilSalary) {

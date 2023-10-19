@@ -5,6 +5,8 @@ import axios from "axios";
 const backendApi = import.meta.env.VITE_BACKEND_API as string;
 
 export interface BudgetBreakdownJson {
+  fromSalary: number;
+  toSalary: number;
   moneyIn: Transaction[];
   singlePayments: Transaction[];
   multiPayments: MultiPaymentBreakdown[];
