@@ -76,7 +76,11 @@ const RightSide = (props: {
 
   // on initial load, set the canvas width and number of columns
   useEffect(() => {
-    if (numberOfColumns === null || canvasWidth === null) {
+    if (
+      numberOfColumns === null ||
+      canvasWidth === null ||
+      Object.keys(categoriesRefs).length !== props.multiPayments.length
+    ) {
       if (!rightSideScrollElement) return;
       if (!rightSideScrollElement.current) return;
       setCanvasWidth(rightSideScrollElement.current.clientWidth - 20);

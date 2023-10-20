@@ -270,59 +270,6 @@ export default function MoneyTracker() {
     };
   }, [open]);
 
-  // alt + right or left to jump to another table
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // right arrow
-      if (event.altKey && event.key === "ArrowRight") {
-        let selectedTable = tablesRefs.moneyIn;
-        let getSelectedTable = false;
-        for (const tableRef of Object.values(tablesRefs)) {
-          if (getSelectedTable) {
-            selectedTable = tableRef;
-            break;
-          }
-
-          if (tableRef.current === null) continue;
-          const hot = tableRef.current.hotInstance;
-          if (hot === null) continue;
-          if (hot.getSelected()) {
-            // deselect the current table
-            hot.deselectCell();
-            getSelectedTable = true;
-          }
-        }
-        selectedTable.current?.hotInstance?.selectCell(0, 0);
-      }
-      // left arrow
-      else if (event.altKey && event.key === "ArrowLeft") {
-        let selectedTable = Object.values(tablesRefs).reverse()[0];
-        let getSelectedTable = false;
-        for (const tableRef of Object.values(tablesRefs).reverse()) {
-          if (getSelectedTable) {
-            selectedTable = tableRef;
-            break;
-          }
-
-          if (tableRef.current === null) continue;
-          const hot = tableRef.current.hotInstance;
-          if (hot === null) continue;
-          if (hot.getSelected()) {
-            // deselect the current table
-            hot.deselectCell();
-            getSelectedTable = true;
-          }
-        }
-        selectedTable.current?.hotInstance?.selectCell(0, 0);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [tablesRefs]);
-
   const [showErrorToast, setShowErrorToast] = useState(false);
   return (
     <>
@@ -330,7 +277,7 @@ export default function MoneyTracker() {
         <div className={styles.moneyTrackerHeader}>
           <span>📆 Money Track </span>
 
-          <div style={{ height: 24, width: 100, zIndex: 200 }}>
+          <div style={{ height: 24, width: 110, zIndex: 200 }}>
             <Datepicker
               value={{
                 startDate: fromSalary,

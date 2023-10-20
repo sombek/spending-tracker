@@ -8,14 +8,6 @@ const shortcuts = [
     keys: ["⌘", "/"],
   },
   {
-    action: "Jump to next table",
-    keys: ["Option", "→"],
-  },
-  {
-    action: "Jump to previous table",
-    keys: ["Option", "←"],
-  },
-  {
     action: "Add row above",
     keys: ["Option", "↑"],
     note: "Only works when there is a row selected",
