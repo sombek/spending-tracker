@@ -73,16 +73,6 @@ const DataTable = (props: DataTableProps) => {
 
     const gridContext = hot.getShortcutManager().getContext("grid");
     if (gridContext === undefined) throw new Error("No grid context found");
-    const scrollToCell = (cell: HTMLTableCellElement | null) => {
-      if (cell === null) throw new Error("No cell found");
-      if (props.scrollRef === undefined || props.scrollRef === null) return;
-      if (props.scrollRef.current === null) return;
-      // scroll to the newly inserted row
-      props.scrollRef.current.scrollTo({
-        top: cell.offsetTop,
-        behavior: "smooth",
-      });
-    };
 
     gridContext.addShortcut({
       group: "Insert",
@@ -99,9 +89,6 @@ const DataTable = (props: DataTableProps) => {
           hot.alter("insert_row_below", selectedRow[0][0]);
           // change the selection to the newly inserted row
           hot.selectCell(selectedRow[0][0] + 1, 0);
-
-          const cell = hot.getCell(selectedRow[0][0] + 1, 0);
-          scrollToCell(cell);
         }
         //
         else if (event.key === "ArrowUp") {
@@ -109,9 +96,6 @@ const DataTable = (props: DataTableProps) => {
           hot.alter("insert_row_above", selectedRow[0][0]);
           // change the selection to the newly inserted row
           hot.selectCell(selectedRow[0][0], 0);
-
-          const cell = hot.getCell(selectedRow[0][0], 0);
-          scrollToCell(cell);
         } //
         else if (event.key === "Enter") {
           // insert a new row below the selected row if the selected row is the last row
@@ -119,8 +103,6 @@ const DataTable = (props: DataTableProps) => {
             hot.alter("insert_row_below", selectedRow[0][0]);
             // change the selection to the newly inserted row
             hot.selectCell(selectedRow[0][0] + 1, 0);
-            const cell = hot.getCell(selectedRow[0][0] + 1, 0);
-            scrollToCell(cell);
           }
         }
       },
@@ -142,7 +124,6 @@ const DataTable = (props: DataTableProps) => {
         const currentSelectedCell = hot.getSelected();
         if (currentSelectedCell === void 0)
           throw new Error("No selected cell found");
-        scrollToCell(hot.getCell(currentSelectedCell[0][0], 0));
       },
     });
   }, [props.scrollRef]);
@@ -157,16 +138,6 @@ const DataTable = (props: DataTableProps) => {
       },
     ],
   ]);
-  // useEffect(() => {
-  //   if (props.tableTitle !== undefined)
-  //     setNestedHeaders([
-  //       [{ label: "table-title", colspan: 2 }],
-  //       [
-  //         { label: "Title", colspan: 1 },
-  //         { label: "Amount", colspan: 1 },
-  //       ],
-  //     ]);
-  // }, [props.tableTitle]);
 
   return (
     <>
@@ -174,6 +145,7 @@ const DataTable = (props: DataTableProps) => {
         ref={hotTableComponentRef}
         data={props.data}
         minRows={1}
+        fillHandle={false}
         colHeaders={true}
         rowHeaders={false}
         width="100%"

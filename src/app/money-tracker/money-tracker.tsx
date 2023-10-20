@@ -27,6 +27,7 @@ import RightTopBar from "app/money-tracker/right-top-bar/RightTopBar";
 import { MapPinIcon } from "@heroicons/react/20/solid";
 import Datepicker from "react-tailwindcss-datepicker";
 import moment from "moment";
+import useDidMountEffect from "hooks/useDidMountEffect";
 
 function ErrorToast(props: { show: boolean }) {
   if (!props.show) return null;
@@ -89,13 +90,10 @@ export default function MoneyTracker() {
         return dateWithMonthFromParam.toDate();
       return new Date();
     }
-    // int time stamp to date
-    console.log("budgetBreakdown.fromSalary:", budgetBreakdown.fromSalary);
     return new Date(budgetBreakdown.fromSalary);
   });
 
   const [toSalary, setToSalary] = useState<Date>(() => {
-    console.log("month", month);
     if (!budgetBreakdown.toSalary) {
       // if to salary is not provided, use the current month + 1
       // 25th of the month
@@ -212,7 +210,8 @@ export default function MoneyTracker() {
 
   // on each update on the data, we need to update the state in backend
   // so that we can save the data
-  useEffect(() => {
+  useDidMountEffect(() => {
+    // console.log("saving data");
     if (!year || !month) throw new Error("Year or month not provided");
     // remove empty transactions
     const cleanedMoneyIn = updatedMoneyIn.filter(
