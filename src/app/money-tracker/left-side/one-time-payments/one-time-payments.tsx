@@ -20,7 +20,7 @@ const OneTimePayments = (props: {
   return (
     <>
       <MoveAndAddRowAndTitleElement
-        title={"💸 One Time Payments"}
+        title={"💸 Monthly Commitments"}
         bgColor={"red"}
         hotTableComponentRef={props.tableRef}
         hideMoveIcon
@@ -33,10 +33,6 @@ const OneTimePayments = (props: {
         onAfterChange={afterChange}
         onAfterRemoveRow={() =>
           props.setSinglePayments([...props.singlePayments])
-        }
-        tableBackgroundColor="bg-red-100"
-        tableTitle={
-          <span className="font-medium text-red-900">💸 One Time Payments</span>
         }
       />
     </>

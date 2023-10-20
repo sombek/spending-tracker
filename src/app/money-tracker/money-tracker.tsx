@@ -403,8 +403,8 @@ const steps: ReactourStep[] = [
         <div className={"flex flex-row items-center"}>
           <div className={"flex flex-col"}>
             <div className={"text-sm font-medium text-gray-900"}>
-              Here you can add your one time payments These are usually payments
-              that is fixed every month. Examples?
+              Here you can add your monthly commitment payments These are
+              usually payments that is fixed every month. Examples?
             </div>
             <div className={"text-xs text-gray-500"}>
               <ul className={"list-disc list-inside"}>

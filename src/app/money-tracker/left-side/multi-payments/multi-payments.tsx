@@ -92,13 +92,6 @@ const MultiPayments = (props: {
             setCurrentSelectedCategory(category.title);
           }}
           onDeselection={() => setCurrentSelectedCategory(null)}
-          tableTitle={
-            <div className="tooltip tooltip-open" data-tip="hello">
-              <span className="font-medium text-red-900">
-                💸 Category Based Expenses
-              </span>
-            </div>
-          }
         />
       </div>
       {currentSelectedCategory !== null && (
