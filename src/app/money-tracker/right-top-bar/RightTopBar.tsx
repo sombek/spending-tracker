@@ -6,44 +6,24 @@ const RightTopBar = (props: {
   sumOfMoneyOut: number;
   sumOfMoneyRemaining: number;
 }) => {
-  const [daysUntilSalary, setDaysUntilSalary] = useState<number>(() => {
-    if (props.nextSalaryDate < new Date()) return 0;
-
+  const getDaysUntilSalary = (nextSalaryDateInternal: Date): number => {
+    // if the next salary date is in the past, return 0
+    if (nextSalaryDateInternal < new Date()) return 0;
     const numberOfDaysUntilSalary = Math.ceil(
-      (props.nextSalaryDate.getTime() - new Date().getTime()) /
+      (nextSalaryDateInternal.getTime() - new Date().getTime()) /
         (1000 * 60 * 60 * 24),
     );
-    console.log("numberOfDaysUntilSalary", numberOfDaysUntilSalary);
-    if (numberOfDaysUntilSalary === -0) return 0;
-
+    if (numberOfDaysUntilSalary < 1) return 0;
     return numberOfDaysUntilSalary;
-  });
+  };
 
-  useEffect(() => {
-    if (props.nextSalaryDate < new Date()) {
-      setDaysUntilSalary(0);
-      return;
-    }
-
-    const numberOfDaysUntilSalary = Math.ceil(
-      (props.nextSalaryDate.getTime() - new Date().getTime()) /
-        (1000 * 60 * 60 * 24),
-    );
-
-    if (numberOfDaysUntilSalary === -0) {
-      setDaysUntilSalary(0);
-      return;
-    }
-    const interval = setInterval(() => {
-      setDaysUntilSalary((daysUntilSalary) => {
-        if (daysUntilSalary === numberOfDaysUntilSalary) {
-          clearInterval(interval);
-          return daysUntilSalary;
-        }
-        return daysUntilSalary + 1;
-      });
-    }, 1);
-  }, [props.nextSalaryDate]);
+  const [daysUntilSalary, setDaysUntilSalary] = useState<number>(() =>
+    getDaysUntilSalary(props.nextSalaryDate),
+  );
+  useEffect(
+    () => setDaysUntilSalary(getDaysUntilSalary(props.nextSalaryDate)),
+    [props.nextSalaryDate],
+  );
 
   return (
     <div

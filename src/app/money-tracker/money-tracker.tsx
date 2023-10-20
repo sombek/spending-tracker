@@ -329,49 +329,36 @@ export default function MoneyTracker() {
     <>
       <div>
         <div className={styles.moneyTrackerHeader}>
-          <span>📆 Money Track from</span>
+          <span>📆 Money Track </span>
 
-          <div style={{ width: 130, zIndex: 200 }}>
+          <div style={{ height: 24, width: 100, zIndex: 200 }}>
             <Datepicker
               value={{
                 startDate: fromSalary,
-                endDate: fromSalary,
-              }}
-              asSingle={true}
-              maxDate={toSalary}
-              showFooter={true}
-              useRange={false}
-              displayFormat={"MMM D"}
-              onChange={(value) => {
-                if (value === null) return;
-                console.log(new Date(value.startDate as string));
-                setFromSalary(new Date(value.startDate as string));
-              }}
-            />
-          </div>
-          <span>To</span>
-          <div style={{ width: 130, zIndex: 200 }}>
-            <Datepicker
-              value={{
-                startDate: toSalary,
                 endDate: toSalary,
               }}
+              toggleClassName="hidden"
+              readOnly={true}
+              inputClassName={(className) => {
+                className =
+                  "text-center cursor-pointer focus:outline-none rounded-md bg-white border border-gray-300 py-1 text-xs font-medium hover:bg-gray-50 mx-2 h-full w-full";
+                return className;
+              }}
+              primaryColor={"blue"}
+              placeholder={"loading..."}
               displayFormat={"MMM D"}
-              minDate={fromSalary}
-              asSingle={true}
-              useRange={false}
               onChange={(value) => {
                 if (value === null) return;
-                setToSalary(new Date(value.startDate as string));
+                setFromSalary(new Date(value.startDate as string));
+                setToSalary(new Date(value.endDate as string));
               }}
             />
           </div>
-
           <button
             className={
-              "items-center rounded-md bg-white border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mr-1 ml-1 hidden sm:inline-flex"
+              "items-center rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 mx-3 hidden sm:inline-flex"
             }
-            style={{ height: 24, paddingTop: 0 }}
+            style={{ height: 24, paddingTop: 4, marginTop: 3 }}
             onClick={() => setShowTour(true)}
           >
             <MapPinIcon className={"h-3 w-3 mr-1 text-red-700"}></MapPinIcon>
