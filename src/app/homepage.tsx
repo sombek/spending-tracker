@@ -1,11 +1,7 @@
-import {
-  CalendarDaysIcon,
-  IdentificationIcon,
-} from "@heroicons/react/20/solid";
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Suspense, useState } from "react";
 import LoadingSpinner from "components/loading";
-import { useAuth0 } from "@auth0/auth0-react";
 import { CloudIcon, DocumentIcon } from "@heroicons/react/24/solid";
 import FileSystemStorage from "app/money-tracker/storage-types/file-system-storage";
 
@@ -84,35 +80,6 @@ const Homepage = () => {
     });
 
   const [selectedStorageType, setSelectedStorageType] = useState("cloud");
-  const { isAuthenticated } = useAuth0();
-  if (!isAuthenticated)
-    return (
-      <div className={"mx-auto mt-8 w-3/4"}>
-        {/*put a message here to say that the user needs to log in*/}
-
-        <div className={"text-2xl font-semibold"}>
-          {/*Make things next to each other*/}
-          <div className={"text-gray-400 flex flex-col"}>
-            <IdentificationIcon
-              style={{
-                width: "100px",
-                height: "100px",
-                color: "#374151",
-              }}
-            />
-            <div className={"text-2xl font-semibold"}>
-              Please log in to continue
-            </div>
-          </div>
-        </div>
-        {/*  Put some text here to explain what the app is about*/}
-        <p>
-          This is a simple app to help you track your money. You can use it to
-          track your income and expenses. You can also use it to track your
-          savings and investments.
-        </p>
-      </div>
-    );
   return (
     <Suspense fallback={<LoadingSpinner />}>
       {/*Cloud or File based storage*/}
