@@ -46,10 +46,12 @@ const router = createBrowserRouter([
       {
         path: "/money-tracker/:year/:month",
         element: <MoneyTracker />,
-
         loader: async ({ params }) => {
           const isAuthenticated = await auth0AuthProvider.isAuthenticated();
-          if (!isAuthenticated) return console.log("User is not authenticated");
+          if (!isAuthenticated) {
+            // return to the homepage
+            window.location.href = "/";
+          }
 
           const access_token = await auth0AuthProvider.accessToken();
           if (!access_token) throw new Error("No access token");
