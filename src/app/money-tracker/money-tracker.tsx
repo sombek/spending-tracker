@@ -239,6 +239,8 @@ export default function MoneyTracker() {
       singlePayments: cleanedSinglePayments,
       multiPayments: cleanedMultiPayments,
       lastMonthMoneyRemaining: null,
+      month: null,
+      year: null,
     };
     getAccessTokenSilently().then((access_token) => {
       upsertBudget(+year, +month, updatedMultiPayments, access_token).catch(

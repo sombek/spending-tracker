@@ -12,6 +12,8 @@ export interface BudgetBreakdownJson {
   multiPayments: MultiPaymentBreakdown[];
   lastMonthMoneyRemaining: number | null;
   showTour?: boolean;
+  year: number | null;
+  month: number | null;
 }
 
 export interface Transaction {
@@ -49,6 +51,31 @@ export const upsertBudget = async (
     },
   );
   if (response.status !== 200) throw new Error("Error saving budget");
+};
+
+export type UserBudgets = BudgetBreakdownJson & {
+  month: number;
+};
+export const getAllBudgets = async (
+  accessToken: string,
+): Promise<
+  {
+    year: number;
+    months: UserBudgets[];
+  }[]
+> => {
+  const response = await axios.get<
+    {
+      year: number;
+      months: UserBudgets[];
+    }[]
+  >(`${backendApi}/budget-breakdown`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (response.status !== 200) throw new Error("Error getting budgets");
+  return response.data;
 };
 
 export const getYearMonthData = async (

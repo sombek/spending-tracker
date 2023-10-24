@@ -8,7 +8,6 @@ function FileSystemStorage() {
     useState<FileSystemDirectoryHandle | null>(null); // DirectoryHandle
   const navigate = useNavigate();
 
-  const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   const months = [8, 9]
     .map((n) => n - 1)
@@ -16,9 +15,8 @@ function FileSystemStorage() {
       const monthName = new Date(0, month).toLocaleString("default", {
         month: "long",
       });
-      const isCurrentMonth = month === currentMonth;
       const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
-      return MonthBlock(monthName, isCurrentMonth, monthLink, navigate);
+      return MonthBlock(monthName, monthLink, navigate);
     });
 
   async function selectDirectory() {
