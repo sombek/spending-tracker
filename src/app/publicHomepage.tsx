@@ -115,7 +115,7 @@ const PublicHomepage = () => {
           {/* Right Col */}
           <div className="w-full xl:w-3/5 p-12 overflow-hidden mx-auto md:w-4/5 transform -rotate-6 transition hover:scale-105 duration-700 ease-in-out hover:rotate-6">
             <div className="mockup-window border bg-base-300 shadow-lg shadow-fuchsia-300 ">
-              <img className="" src="screenshot.png" alt="MacBook" />
+              <img className="" src="screenshot.jpg" alt="MacBook" />
             </div>
           </div>
 
