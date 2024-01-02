@@ -182,7 +182,6 @@ const Homepage = () => {
                 navigate,
                 monthData.fromSalary,
                 monthData.toSalary,
-                setToBeDeletedMonth,
               );
             });
 
