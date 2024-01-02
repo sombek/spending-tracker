@@ -149,35 +149,6 @@ export const MonthBlock = (
         }}
       />
     </div>
-    // <div
-    //   key={month}
-    //   className={[
-    //     "border border-gray-200 rounded-md p-4 hover:border-gray-400 cursor-pointer " +
-    //       "transition duration-500 ease-in-out transform " +
-    //       "hover:-translate-y-1 hover:scale-100 hover:shadow-lg hover:bg-gray-100",
-    //   ].join(" ")}
-    //   onClick={() => navigate(link)}
-    // >
-    //
-    //   <div
-    //     className={[
-    //       "rounded-full w-16 h-16 flex items-center justify-center " +
-    //         "bg-gray-200 text-gray-500",
-    //     ].join(" ")}
-    //   >
-    //     <CalendarDaysIcon />
-    //   </div>
-    //   <div className={"text-center mt-4 text-gray-500 font-bold"}>
-    //     {month} Salary
-    //   </div>
-    //   {from && to && (
-    //     <div className={"text-center text-gray-500"}>
-    //       {`From ${moment(from).toDate().toLocaleDateString()} to ${moment(to)
-    //         .toDate()
-    //         .toLocaleDateString()}`}
-    //     </div>
-    //   )}
-    // </div>
   );
 };
 const Homepage = () => {
@@ -191,65 +162,59 @@ const Homepage = () => {
       getAllBudgets(accessToken)
         .then((years) => {
           const currentYear = new Date().getFullYear();
-          const selectedYear = years.find((year) => year.year === currentYear);
-          if (!selectedYear) throw new Error("No year found");
-          const yearsMonths = selectedYear.months;
-          const maxMonth = Math.max(...yearsMonths.map((month) => month.month));
-          console.log(maxMonth);
-          const toBeRenderedElements = yearsMonths.map((monthData) => {
-            const month = monthData.month - 1;
-            const monthName = new Date(0, month).toLocaleString("default", {
-              month: "long",
+          // sort by descending order
+          years.sort((a, b) => b.year - a.year);
+          const renderedYears = years.map((yearData) => {
+            const year = yearData.year;
+            const isSelectedYear = year === currentYear;
+            const months = yearData.months;
+
+            const renderedMonths = months.map((monthData) => {
+              const month = monthData.month - 1;
+              const monthName = new Date(0, month).toLocaleString("default", {
+                month: "long",
+              });
+
+              const monthLink = `/money-tracker/${year}/${month + 1}`;
+              return MonthBlock(
+                monthName,
+                monthLink,
+                navigate,
+                monthData.fromSalary,
+                monthData.toSalary,
+                setToBeDeletedMonth,
+              );
             });
-            console.log(monthData);
-            const monthLink = `/money-tracker/${currentYear}/${month + 1}`;
-            return MonthBlock(
-              monthName,
-              monthLink,
-              navigate,
-              monthData.fromSalary,
-              monthData.toSalary,
-            );
-          });
-          setIsLoading(false);
-          // add one more month if user wants to add a new month
-          const nextMonth = moment(currentYear + "-" + maxMonth);
-          nextMonth.add(1, "months");
-          console.log(+nextMonth.format("M"));
-          toBeRenderedElements.push(
-            <div
-              className={[
-                "cursor-pointer ",
-                "transition duration-200 ease-in-out transform ",
-                "hover:-translate-y-0.5 hover:scale-100 hover:shadow-lg hover:bg-gray-100",
-                "card w-50 glass",
-              ].join(" ")}
-              key={"add-month"}
-              onClick={() =>
-                navigate(
-                  `/money-tracker/${+nextMonth.format(
-                    "YYYY",
-                  )}/${+nextMonth.format("M")}`,
-                )
-              }
-            >
-              <figure>
-                <img
-                  src={
-                    "https://unsplash.com/photos/bj3l739cwc8/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8M3x8YWRkfGVufDB8fHx8MTY5ODE1NTM0OHww&force=true&w=640"
+
+            const yearComponent = (
+              <div key={`year-${year}`}>
+                <div className={"flex flex-row justify-between"}>
+                  <div className={"text-2xl font-semibold"}>
+                    Money Tracker
+                    <div className={"text-gray-400"}>{year}</div>
+                  </div>
+                </div>
+                <hr />
+                <br />
+
+                <div
+                  className={
+                    "grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                   }
-                  alt={"add month image"}
-                  className={"object-cover w-full h-32 rounded-t-md"}
-                />
-              </figure>
-              <div className="" style={{ padding: "1rem" }}>
-                <h2 className="card-title justify-center">
-                  <FolderPlusIcon className={"w-6 h-6 mr-2 text-gray-500"} />
-                  Add Month
-                </h2>
+                >
+                  {renderedMonths}
+                </div>
+                <br />
+                <br />
               </div>
-            </div>,
-          );
+            );
+
+            return isSelectedYear ? [yearComponent] : yearComponent;
+          });
+
+          const toBeRenderedElements = renderedYears.flat();
+
+          setIsLoading(false);
           setMonths(toBeRenderedElements);
         })
         .catch((err) => {
@@ -261,7 +226,7 @@ const Homepage = () => {
   return (
     <div
       style={{
-        height: "calc(100vh - 48px)",
+        minHeight: "calc(100vh - 48px)",
         background:
           "linear-gradient(to top, transparent, #f1fdf4), url(/noise.svg)",
       }}
@@ -311,40 +276,10 @@ const Homepage = () => {
             <LoadingSpinner />
           </div>
         )}
-        {selectedStorageType === "cloud" && (
-          <CloudMonths currentYear={new Date().getFullYear()} months={months} />
-        )}
+        {selectedStorageType === "cloud" && months}
         {selectedStorageType === "file" && <FileSystemStorage />}
       </div>
     </div>
   );
 };
-
-function CloudMonths({
-  currentYear,
-  months,
-}: {
-  currentYear: number;
-  months: JSX.Element[];
-}) {
-  return (
-    <>
-      <div className={"flex flex-row justify-between"}>
-        <div className={"text-2xl font-semibold"}>
-          Money Tracker
-          <div className={"text-gray-400"}>{currentYear}</div>
-        </div>
-      </div>
-      <hr />
-      <br />
-
-      <div className={"grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}>
-        {months.map((month) => month)}
-      </div>
-      <br />
-      <br />
-    </>
-  );
-}
-
 export default Homepage;
